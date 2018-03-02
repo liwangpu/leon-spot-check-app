@@ -1,0 +1,88 @@
+page-logon {
+    .login-content {
+        background: url("../assets/imgs/logon.png") no-repeat center;
+        background-size: cover;
+    }
+    .avator-container {
+        width: 12em;
+        height: 14em;
+        margin: 0 auto;
+    }
+    .avator-container .avator {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .avator>img{
+        height: 6em;
+        width: 6em;
+        border-radius: 50%;
+    }
+    
+    .appident {
+        font-size: 2em;
+        color: white;
+        margin-top: 0.5em;
+        text-align: center;
+    }
+    .input-container {
+        border: 1px solid #E6E6E7;
+        border-top: 0;
+        border-left: 0;
+        border-right: 0;
+    }
+    .logon-input {
+        width: 80%;
+        height: 2em;
+        font-size: 1.5em;
+        color: white;
+        border: 0;
+        margin-left: 0.5em;
+        background: rgba(0, 0, 0, 0);
+    }
+    .logon-icon {
+        zoom: 1.5;
+        color: white;
+    }
+    .verify-container {
+        text-align: center;
+        height: 2em;
+        margin: 5px auto;
+    }
+    .verify-container .verify-link {
+        color: white;
+    }
+
+    .logon-button{
+        background: white;
+        color: #00BCD4;
+    }
+
+    .set-content{
+        margin-left: 70%;
+        text-align:center;
+        color: #e8e8e8;
+        font-size:10px;
+    }
+
+    .fab-content{
+        border-radius: 1em;
+        min-width: 22em;
+        min-height: 12em;
+        max-height: 20em;
+        left: -80%;
+        overflow-y: scroll;
+        position: relative;
+        z-index: 9999;
+        background-color: white;
+    }
+
+    fab-item{
+        width: 80%;
+        padding: 0;
+        margin: 0px;
+        left: 5px;
+        right: 5px;
+        border-bottom: 1px solid #b6b4b3
+    }
+}

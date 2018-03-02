@@ -1,0 +1,22 @@
+<!-- <ion-header>
+    <ion-navbar>
+        <ion-title>首页</ion-title>
+    </ion-navbar>
+</ion-header> -->
+
+<ion-content>
+    <ion-refresher (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    <div style="height:40%;padding:0;margin:0;">
+        <page-home-stat-area #homeStatArea [isVisitor]="isVisitor"></page-home-stat-area>
+    </div>
+
+    <div>
+        <page-home-status-area [preWarningCount]='preWarningCount' [warningCount]='warningCount' [alarmCount]='alarmCount' [dangerCount]='dangerCount'></page-home-status-area>
+    </div>
+
+    <div>
+        <page-home-module-area></page-home-module-area>
+    </div>
+</ion-content>

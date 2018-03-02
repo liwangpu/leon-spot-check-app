@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      我的
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list class="mine-header">
+    <button ion-item (click)="userSetting()">
+      <ion-avatar item-left>
+        <img [src]="user.ImgPath"/>
+      </ion-avatar>
+      <div>{{user.UserName}}
+      </div>
+    </button>
+  </ion-list>
+  <ion-list>
+    <button ion-item (click)="sysSetting()">
+      <ion-icon name="settings" item-left color="primary"></ion-icon>
+      设置
+    </button>
+  </ion-list>
+  <ion-list *ngIf="user.UserName!='未登录'">
+    <button ion-item (click)="logout()" detail-none>
+      <ion-icon name="power" item-left color="danger"></ion-icon>
+      退出登录
+    </button>
+  </ion-list>
+  <ion-list>
+    <button ion-item (click)="viewAbout()">
+      <ion-icon name="information-circle" item-left color="secondary"></ion-icon>
+      关于
+    </button>
+  </ion-list>
+</ion-content>

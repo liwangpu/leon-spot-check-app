@@ -1,0 +1,96 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons start>
+            <button ion-button (click)="dismiss()">
+                <span ion-text>取消</span>
+            </button>
+        </ion-buttons>
+        <ion-title>
+            {{curMach.NodeName}}
+        </ion-title>
+        <ion-buttons end>
+            <ion-label color="light">
+                {{MeasNode.nIdx}}/{{PointCnt}}
+            </ion-label>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+
+    <form name="frmMeas" (ngSubmit)="saveNumericData()">
+        <ion-list>
+            <ion-item-divider>
+                <ion-label item-start>{{MeasLocation.NodeName}} - {{MeasNode.NodeName}}</ion-label>
+                <ion-note item-end>{{MeasNode.Abbr}}</ion-note>
+            </ion-item-divider>
+            <ion-item>
+                <ion-icon name="pencil" item-start color="primary"></ion-icon>
+                <ion-input type="number" id="numTxt" [step]="0.00001" [min]="0" [(ngModel)]="NewData.Numeric" placeholder="点击输入当前值" name="numeric"
+                    (ionChange)="checkLevel()"></ion-input>
+                <span item-end style="color: #f34235">{{alarmText}}</span>
+            </ion-item>
+            <ion-item no-lines>
+                <div style="float: right;">
+                    <h3 *ngFor="let alarm of alarmSet">{{alarm.Text}}: {{alarm.Value}}</h3>
+                </div>
+            </ion-item>
+            <ion-item-divider>
+                <h4>备注说明</h4>
+            </ion-item-divider>
+            <ion-item>
+                <ion-textarea placeholder="点击输入点检备注" [ngModel]="NewData.Des" rows="3" name="des"></ion-textarea>
+            </ion-item>
+        </ion-list>
+        <ion-list>
+            <button ion-item full text-center detail-none type="submit">
+                保存
+            </button>
+        </ion-list>
+    </form>
+
+    <ion-list>
+        <ion-item-divider>
+            上次：{{MeasNode.LastData&&MeasNode.LastData.ValueStr?MeasNode.LastData.ValueStr:''}}
+            <ion-note item-end>
+                {{MeasNode.LastData&&MeasNode.LastData.SampleTime?MeasNode.LastData.SampleTime.substr(5,14):''}}
+            </ion-note>
+        </ion-item-divider>
+        <ion-item>
+            <canvas #histLine height="170">
+
+            </canvas>
+        </ion-item>
+        <ion-item-divider>
+            <ion-icon name="list-box-outline" color="primary"></ion-icon>
+            历史数据
+        </ion-item-divider>
+        <ion-item-sliding *ngFor="let item of PointHistory">
+            <ion-item>
+                {{item.MeasValue}}&nbsp;{{item.Abbr}}
+                <ion-note item-end>
+                    {{item.SampleTime?item.SampleTime.substr(5,14):''}}
+                </ion-note>
+            </ion-item>
+            <ion-item-options>
+                <button ion-button color="danger" (click)="deletePatrolData(item)">删除</button>
+            </ion-item-options>
+        </ion-item-sliding>
+    </ion-list>
+
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-buttons start>
+            <button ion-button icon-left (click)="goPre()">
+                <ion-icon name="arrow-back"></ion-icon>
+                上一条
+            </button>
+        </ion-buttons>
+        <ion-buttons end>
+            <button ion-button icon-right (click)="goNext()">
+                下一条
+                <ion-icon name="arrow-forward"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-footer>

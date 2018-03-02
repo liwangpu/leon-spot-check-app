@@ -1,0 +1,47 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            {{curPatrol.PlanName}}
+        </ion-title>
+    </ion-navbar>
+    <ion-row class="search">
+        <ion-col>
+            <ion-searchbar placeholder="请输入或扫描设备信息" (ionInput)="filterItems($event)" autocomplete="on" [(ngModel)]="filtertTxt"
+            >
+            </ion-searchbar>
+        </ion-col>
+        <ion-col col-auto style=" margin-left: -10px;">
+            <!-- <button ion-button clear style="padding:0; margin:0; border: 0">
+                <img src="../../../assets/imgs/scan.png" />
+            </button> -->
+            <ion-icon name="scan" style="zoom: 2.2;" color="primary" (click)="scanMach()"></ion-icon>
+        </ion-col>
+    </ion-row>
+</ion-header>
+
+<ion-content>
+    <ion-refresher (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="下拉刷新" refreshingSpinner="ios" refreshingText="加载中..."></ion-refresher-content>
+    </ion-refresher>
+
+
+    <ion-list>
+        <div *ngFor="let item of PatrolMach">
+            <ion-item-divider *ngIf="item.NodeType!=3" color="primary">
+                {{item.NodeName}}
+                <ion-badge item-end>{{item.PointDone}}/{{item.PointCount}}</ion-badge>
+            </ion-item-divider>
+            <button ion-item *ngIf="item.NodeType==3" (click)="machItemClick(item)">
+                {{item.NodeName}}
+                <ion-note item-end>{{item.PointDone}}/{{item.PointCount}}</ion-note>
+            </button>
+        </div>
+    </ion-list>
+    <ion-infinite-scroll *ngIf="hasMoreRec" (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="数据加载中...">
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+    <div style="text-align:center;">
+        <span *ngIf="!hasMoreRec" style="color:#BEBEBE;">没有更多的数据了</span>
+    </div>
+</ion-content>

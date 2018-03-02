@@ -1,0 +1,23 @@
+page-MachList{
+    .ion-icon {
+        font-size: 20px; //Preferred size here
+    }
+    .toolbar-background {
+        background-color: color($colors, light) !important;
+    }
+    .bar-button-default-ios{
+        color: color($colors, primary) !important;
+    }
+    .toolbar-title-ios{
+        color: #000 !important;
+    }
+    ion-searchbar.searchbar-ios {
+        background-color: color($colors, light);
+        border: none;
+        box-shadow: none;
+    }
+
+    .search{
+        background-color: color($colors, light);
+    }
+}

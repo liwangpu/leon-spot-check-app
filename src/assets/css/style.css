@@ -1,0 +1,121 @@
+/* Empty. Add your own CSS if you like */
+body {
+
+	background-color: #333;
+}
+
+/*alarm level color*/
+.pt-alarm0, .pt-normal {
+	color: #111;
+}
+
+.pt-alarm1 {
+	color: #0096ff;
+}
+
+.pt-alarm2 {
+	color: #ffa200;
+}
+
+.pt-alarm3 {
+	color: #ff0000;
+}
+
+.pt-alarm4 {
+	color: #C00000;
+}
+
+.size-10 {
+	font-size: 10px !important;
+}
+.size-12 {
+	font-size: 12px !important;
+}
+.size-14 {
+	font-size: 14px !important;
+}
+.size-16 {
+	font-size: 16px !important;
+}
+.size-18 {
+	font-size: 18px !important;
+}
+.size-21 {
+	font-size: 21px !important;
+}
+.size-24 {
+	font-size: 24px !important;
+}
+.size-28 {
+	font-size: 28px !important;
+}
+.size-32 {
+	font-size: 32px !important;
+}
+.size-48 {
+	font-size: 48px !important;
+}
+.size-64 {
+	font-size: 64px !important;
+}
+.size-96 {
+	font-size: 96px !important;
+}
+
+.txtcenter {
+	text-align: center;
+}
+
+.user_icon {
+
+}
+
+/* item  */
+.item-p {
+	font-size: 14px !important;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.item-grid {
+	padding: 0px !important;
+}
+
+.buttonLite, .item-button-right > .buttonLite, .item-button-right .item-content > .buttonLite {
+	min-width: 34px;
+	min-height: 20px !important;
+	font-size: 14px;
+	line-height: 20px;
+}
+.buttonLite .icon:before, .item-button-right > .buttonLite .icon:before, .item-button-right .item-content > .buttonLite .icon:before {
+	line-height: 20px;
+}
+/* grid */
+.col-label {
+	color: #333;
+}
+
+/* popup-view */
+.popup-view {
+
+}
+.popup-view .popup {
+	background-color: #ffffff;
+}
+
+/* override */
+.pane, .view {
+	background-color: #f0f0f0 !important;
+}
+
+.card .item.item-input .liteinput {
+	padding-right: 14px;
+}
+
+.platform-android .action-sheet .action-sheet-title, .platform-android .action-sheet .button {
+	text-align: center;
+	border-color: transparent;
+	font-size: 16px;
+	color: inherit;
+}

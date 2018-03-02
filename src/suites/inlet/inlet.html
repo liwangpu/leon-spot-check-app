@@ -1,0 +1,4 @@
+<button ion-button full class="square-button" [ngStyle]='currentStyles' (click)='onClick()' style="font-size:2em;font-weight:2em;">{{innerTitle}}
+    <ion-icon *ngIf='iconName!==""&&iconName!==null&&iconName!==undefined' [name]="iconName" [ngStyle]='iconStyles'></ion-icon>
+</button>
+<span class="square-tip">{{title}}</span>

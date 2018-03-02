@@ -1,0 +1,135 @@
+app-pattern-lock {
+    #patternLockContainer {
+        height: 100%; // 
+        background-color: #3382C0 !important;
+    }
+    .pattern-content {
+        width: auto;
+        margin: 0 auto;
+        text-align: center;
+    } // .patt-dots {
+    //     // background: #00BCD4;
+    // }
+    // .patt-lines {
+    //     // background: #00BCD4;
+    // }
+    // .content {
+    //     // background: black;
+    //     background-color: rgba(9, 42, 83, 1);
+    //     margin: 0 auto;
+    // }
+    // .footer {}
+    .toolbar-background-ios {
+        background-color: #3382c0 !important;
+    } // .toolbar-background-ios {
+    //     border-style: none!important;
+    // }
+    .patt-holder {
+        background: #3382c0;
+        -ms-touch-action: none;
+    }
+    .patt-wrap {
+        position: relative;
+        cursor: pointer;
+    }
+    .patt-wrap ul,
+    .patt-wrap li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .patt-circ {
+        position: relative;
+        float: left;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+    }
+    .patt-circ.hovered {
+        border: 5px solid #e8e8e8;
+        opacity: 0.4;
+    }
+    .patt-error .patt-circ.hovered {
+        border: 3px solid #BA1B26;
+    }
+    .patt-hidden .patt-circ.hovered {
+        border: 0;
+    }
+    .patt-dots {
+        background: #FFF;
+        width: 10px;
+        height: 10px;
+        border-radius: 5px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -5px;
+        margin-left: -5px;
+    }
+    .patt-lines {
+        border-radius: 5px;
+        height: 10px;
+        background: rgba(255, 255, 255, .7);
+        position: absolute;
+        transform-origin: 5px 5px;
+        -ms-transform-origin: 5px 5px;
+        /* IE 9 */
+        -webkit-transform-origin: 5px 5px;
+    }
+    .patt-hidden .patt-lines {
+        display: none;
+    }
+    .patt-wrap {
+        margin: auto;
+        overflow: hidden
+    }
+    .patt-wrap li {
+        transition: all .4s ease-in-out 0s
+    }
+    .patt-dots,
+    .patt-lines {
+        transition: background .1s ease-in-out 0s
+    }
+    .patt-circ {
+        border: 3px solid transparent
+    }
+    .patt-dots {
+        background: rgba(255, 255, 255, .8)
+    }
+    .patt-lines {
+        background: rgba(255, 255, 255, .4)
+    }
+    .patt-circ.hovered {
+        border-color: #ddd;
+        background: rgba(255, 255, 255, .2)
+    }
+    .patt-error .patt-circ.hovered {
+        background: rgba(243, 66, 53, .4);
+        border-color: rgba(243, 66, 53, .8)
+    }
+    .patt-error .patt-lines {
+        background: rgba(243, 66, 53, .5)
+    }
+    .patt-success .patt-circ.hovered {
+        background: rgba(75, 174, 79, .4);
+        border-color: rgba(75, 174, 79, .8)
+    }
+    .patt-success .patt-lines {
+        background: rgba(75, 174, 79, .5)
+    }
+    .alertMsg {
+        color: #e8e8e8;
+        font-weight: 400;
+    }
+    .error {
+        color: #ff3d65 !important;
+    }
+    /*******************overwrite***********************/
+    app-pattern-lock .patt-holder {
+        background-color: #0096FF !important;
+    }
+    .header-ios .toolbar-ios:last-child .toolbar-background-ios {
+        /*手势码输入页面navication和content之间的border*/
+        border-width: 0 !important;
+    }
+    /*******************overwrite***********************/
+}

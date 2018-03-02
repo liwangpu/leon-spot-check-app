@@ -1,0 +1,33 @@
+page-patrol-plan {
+    span.positive {
+        color: #3D81F5;
+    }
+
+    span.assertive{
+        color: #F05C51; 
+    }
+
+    .toolbar-background {
+        background-color: color($colors, light) !important;
+    }
+
+    .bar-button-default-ios{
+        color: color($colors, primary) !important;
+    }
+    .toolbar-title-ios{
+        color: #000 !important;
+    }
+
+    .seg-header{
+        background-color:color($colors, light)
+    }
+
+    .item{
+        border-top: 1px solid #e0dfe4 !important;
+    }
+
+    .grid{
+        border-bottom: 1px solid #e0dfe4 !important;
+        background: #fff;
+    }
+}

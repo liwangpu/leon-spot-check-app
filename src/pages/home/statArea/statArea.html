@@ -1,0 +1,21 @@
+<ion-slides autoplay="3000" loop="true" speed="2000">
+    <!-- <ion-slides> -->
+    <ion-slide>
+        <img src="assets/imgs/ads1.jpg" />
+    </ion-slide>
+    <ion-slide>
+        <img src="assets/imgs/ads2.jpg" />
+    </ion-slide>
+    <ion-slide>
+        <page-home-stat-area-status-adv></page-home-stat-area-status-adv>
+    </ion-slide>
+    <ion-slide>
+        <page-home-stat-area-arrival-adv></page-home-stat-area-arrival-adv>
+    </ion-slide>
+</ion-slides>
+<div *ngIf="isVisitor" class="loginMask">
+    <ion-avatar>
+        <img src="./assets/imgs/user_white.png" (click)='gotoLogon()'>
+    </ion-avatar>
+    <span (click)='gotoLogon()'>点击登录</span>
+</div>

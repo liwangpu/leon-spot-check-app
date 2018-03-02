@@ -1,0 +1,25 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            个人信息
+        </ion-title>
+    </ion-navbar>
+</ion-header>
+<ion-content>
+    <ion-list >
+        <button ion-item (click)="changeImg()">
+            头像
+            <ion-avatar item-end>
+                <img [src]="user.ImgPath" />
+            </ion-avatar>
+        </button>
+        <ion-item>
+            <ion-label>姓名</ion-label>
+            <ion-input readonly="true"></ion-input>
+            <span item-end>{{user.UserName}}</span>
+        </ion-item>
+        <button ion-item (click)="changePattern()">
+            <ion-label>手势码</ion-label>
+        </button>
+    </ion-list>
+</ion-content>

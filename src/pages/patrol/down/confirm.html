@@ -1,0 +1,29 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>下载计划</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+    <ion-list inset>
+        <ion-item>
+            <ion-icon name="person" item-start></ion-icon>
+            {{userName}}
+        </ion-item>
+        <ion-item>
+            <ion-icon name="list" item-start></ion-icon>
+            <ion-label>执行次数</ion-label>
+            <ion-badge item-end>{{execTime}}</ion-badge>
+        </ion-item>
+        <ion-item>
+            <ion-range min="1" max="30" pin="true" [(ngModel)]="execTime">
+                <ion-label range-left>1</ion-label>
+                <ion-label range-right>30</ion-label>
+            </ion-range>
+        </ion-item>
+    </ion-list>
+
+    <button ion-button full (click)='onDownLoad()'>下载计划</button>
+
+</ion-content>

@@ -1,0 +1,27 @@
+<p class="area-tip">
+
+    <ion-grid>
+        <ion-row>
+            <ion-col>
+                <ion-icon name="md-school"></ion-icon> 快捷操作
+            </ion-col>
+            <ion-col style="text-align:right;">管理</ion-col>
+        </ion-row>
+    </ion-grid>
+</p>
+<ion-grid>
+    <ion-row>
+        <ion-col class="square-panel">
+            <app-inlet-suite [title]='"公告"' [iconName]='"notifications-outline"'></app-inlet-suite>
+        </ion-col>
+        <ion-col class="square-panel">
+            <app-inlet-suite [title]='"点检"' [url]='patrolMode' [iconName]='"list-box-outline"'></app-inlet-suite>
+        </ion-col>
+        <ion-col class="square-panel">
+            <app-inlet-suite [title]='"消息"' [url]='messageMode' [iconName]='"text-outline"'></app-inlet-suite>
+        </ion-col>
+        <ion-col class="square-panel">
+            <app-inlet-suite [title]='"备件"' [iconName]='"speedometer-outline"'></app-inlet-suite>
+        </ion-col>
+    </ion-row>
+</ion-grid>
