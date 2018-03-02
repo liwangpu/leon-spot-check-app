@@ -46,7 +46,7 @@ export class PatternPage {
                 $(".alertMsg").removeClass("error");
                 $(".alertMsg").html('滑动手势解锁');
                 this.lockset.reset();
-            }, 2000);
+            }, 1000);
         }
     }
 }

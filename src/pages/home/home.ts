@@ -41,12 +41,15 @@ export class HomePage {
 
     ionViewWillEnter() {
         this.isVisitor = !this.appCfg.checkCustomer();
+    
         this.statArea.slides.startAutoplay();
+        // this.statArea.slides.update();
         this.refreshMachStatus();
     }
 
     ionViewDidLeave() {
         this.statArea.slides.stopAutoplay();
+        // this.statArea.slides.update();
     }
 
     doRefresh(refresher) {

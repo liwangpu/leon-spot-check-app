@@ -14,7 +14,7 @@ export class PatrolSvr {
     private tbPatrolTask: string;
     public helper: CommonHelper
 
-    constructor( @Inject(forwardRef(() => DataBase)) private db: DataBase,
+    constructor(@Inject(forwardRef(() => DataBase)) private db: DataBase,
         @Inject(forwardRef(() => HistorySvr)) private historySvr: HistorySvr,
         private alarmSvr: AlarmSvr,
         private logSvr: LoggerSvr) {
@@ -981,17 +981,20 @@ export class PatrolSvr {
      * @param localPatrolId 
      * @param userId 
      */
-    deleteLocalPatrolDataById(localPatrolId: number, userId: number):Promise<any>{
-        return new Promise<any>((resolve, reject)=>{
-            let sql="delete from T_PatrolData where IsUpload=0 and Excutor=? and exists(select 1 from T_LocalPatrol l where l.PlanId = T_PatrolData.PlanId and l.Executor=T_PatrolData.Excutor and T_PatrolData.SampleTime>=l.StartTime and T_PatrolData.SampleTime<=l.EndTime and l.LocalPatrolId=?)";
+    deleteLocalPatrolDataById(localPatrolId: number, userId: number): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            let sql = "delete from T_PatrolData where IsUpload=0 and Excutor=? and exists(select 1 from T_LocalPatrol l where l.PlanId = T_PatrolData.PlanId and l.Executor=T_PatrolData.Excutor and T_PatrolData.SampleTime>=l.StartTime and T_PatrolData.SampleTime<=l.EndTime and l.LocalPatrolId=?)";
             //更新巡检计划已完成测点数
-            let sql2="update T_LocalPatrol set FinishedPoint=0 where LocalPatrolId=?";
-            this.db.nestedExecute(this.db.Ins, sql, sql2,[userId, localPatrolId], [localPatrolId]).then((res)=>{
+            let sql2 = "update T_LocalPatrol set FinishedPoint=0 where LocalPatrolId=?";
+            this.db.nestedExecute(this.db.Ins, sql, sql2, [userId, localPatrolId], [localPatrolId]).then((res) => {
+                //删除本地巡检任务
+                let sql3 = "delete from " + this.tbPatrolTask + " where LocalPatrolId=?";
+                this.db.execute(this.db.Ins, sql3, [localPatrolId]);
                 resolve(true);
-            }, (err)=>{
+            }, (err) => {
                 this.logSvr.log("delete LocalPatrolData  failed", err, true)
                 reject(err);
-            }).catch((err)=>{
+            }).catch((err) => {
                 this.logSvr.log("delete LocalPatrolData failed", err, true)
                 reject(err);
             })

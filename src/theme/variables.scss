@@ -41,13 +41,11 @@ primary: #5AA8D8, secondary: #32db64, danger: #f53d3d, light: #f4f4f4, dark: #22
 
 /********************** start:覆盖ionic 默认样式 **********************/
 
-$toolbar-ios-background: color($colors, primary);
-$toolbar-md-background: color($colors, primary);
-$toolbar-wp-background: color($colors, primary);
+
 $toolbar-background: color($colors, primary);
 $toolbar-ios-border-color: color($colors, primary);
-$tabs-ios-background: #f8f8f8;
-$tabs-md-background: #f8f8f8;
+$tabs-ios-background: color($colors, primary);
+$tabs-md-background: color($colors, primary);
 //$tabs-ios-border: 0;
 $tabs-ios-border-color: #e0dfe4;
 $searchbar-ios-input-height: 33px;
@@ -56,18 +54,13 @@ $hairlines-width: 1px;
 $list-border-color: #e0dfe4;
 $tabs-ios-tab-icon-color:white;
 $tabs-ios-tab-icon-color-active:white;
+$tabs-ios-tab-text-color: white;
+$tabs-md-tab-text-color: white;
+$tabs-ios-tab-text-color-active:white;
 // $background-color:#EFEEF4;//会覆盖全部,包括组件里面的背景色
 .content {
     background-color: #EFEEF4 !important;
 }
-
-.tabbar {
-    background-color: color($colors, primary) !important;
-}
-.tab-button-text{
-    color: white !important;
-}
-
 
 /********************** end *******************************************/
 

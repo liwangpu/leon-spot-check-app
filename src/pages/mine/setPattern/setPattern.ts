@@ -46,9 +46,19 @@ export class SetPatternPage {
     }
 
     private doDraw(pattern) {
+        if (String(pattern).length < 5) {
+            $(".alertMsg").addClass("error");
+            $(".alertMsg").html('至少连接5个点，请重新绘制');
+            this.lockset.error();
+            setTimeout(() => {
+                this.lockset.reset();
+                this.doReset();
+            }, 1000);
+            return;
+        }
         if (this.drawCnt == 1) {
             this.firstPattern = pattern;
-            // this.headerTitle = "请重复手势密码";
+            $(".alertMsg").removeClass("error");
             $(".alertMsg").html('请重复手势密码');
             this.lockset.reset();
         }
@@ -57,15 +67,12 @@ export class SetPatternPage {
             if (this.secPattern != this.firstPattern) {
                 // this.patternMsg = "两次手势密码不一致";
                 $(".alertMsg").addClass("error");
-                $(".alertMsg").html('两次手势密码不一致');
+                $(".alertMsg").html('两次手势密码不一致，请重新绘制');
                 this.lockset.error();
                 setTimeout(() => {
-                    // this.patternMsg = "";
-                    $(".alertMsg").removeClass("error");
-                    $(".alertMsg").html('请绘制手势密码');
                     this.lockset.reset();
                     this.doReset();
-                }, 2000);
+                }, 1000);
 
             } else {
                 this.savePattern(this.userId, pattern).then((res) => {

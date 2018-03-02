@@ -1,29 +1,23 @@
 app-pattern-lock {
     #patternLockContainer {
         height: 100%; // 
-        background-color: #3382C0 !important;
+        background-color: #5AA8D8 !important;
     }
     .pattern-content {
-        width: auto;
-        margin: 0 auto;
+        margin: 2em auto;
         text-align: center;
-    } // .patt-dots {
-    //     // background: #00BCD4;
-    // }
-    // .patt-lines {
-    //     // background: #00BCD4;
-    // }
-    // .content {
-    //     // background: black;
-    //     background-color: rgba(9, 42, 83, 1);
-    //     margin: 0 auto;
-    // }
-    // .footer {}
+    } 
+    
     .toolbar-background-ios {
-        background-color: #3382c0 !important;
-    } // .toolbar-background-ios {
+        background-color: #5AA8D8 !important;
+    } 
+    // .toolbar-background-ios {
     //     border-style: none!important;
     // }
+    .pattern-holder{
+        margin: 0 auto ;
+        background-color: #5AA8D8 !important;
+    }
     .patt-holder {
         background: #3382c0;
         -ms-touch-action: none;

@@ -129,6 +129,14 @@ export class LogonPage {
     }
   }
 
+  slideToPre(){
+    this.slides.slidePrev();
+  }
+
+  slideToNext(){
+    this.slides.slideNext();
+  }
+
   svrSetting() {
     this.navCtrl.push(SvrSettingPage, { url: this.appCfg.HMSServiceUrl });
   }

@@ -28,7 +28,7 @@ export class MyApp {
     private dbSvr: DataBase
   ) {
     this.initializeApp();
-    
+
   }
 
   initializeApp() {
@@ -39,12 +39,14 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      this.dbSvr.openDB(null, isMobile).then((res)=>{
-        let sql = 'CREATE TABLE IF NOT EXISTS T_AppCfg ( AppCfgId integer primary key ,CfgValue text NOT NULL ,CfgKey text ,UserId integer  NOT NULL, UserName text NOT NULL, LoginName text NOT NULl, ImgPath text, PatternPwd text, CTime text  ) ';
-        let svrSql = ' CREATE TABLE IF NOT EXISTS T_SvrCfg(SvrCfgId integer primary key, SvrUrl text NOT NULL, CTime text)';
-        this.dbSvr.nestedExecute(this.dbSvr.Ins, sql, svrSql, [], []);
-
-      });
+      //移动设备环境下,先打开数据库
+      if (isMobile) {
+        this.dbSvr.openDB(null, isMobile).then((res) => {
+          let sql = 'CREATE TABLE IF NOT EXISTS T_AppCfg ( AppCfgId integer primary key ,CfgValue text NOT NULL ,CfgKey text ,UserId integer  NOT NULL, UserName text NOT NULL, LoginName text NOT NULl, ImgPath text, PatternPwd text, CTime text  ) ';
+          let svrSql = ' CREATE TABLE IF NOT EXISTS T_SvrCfg(SvrCfgId integer primary key, SvrUrl text NOT NULL, CTime text)';
+          this.dbSvr.nestedExecute(this.dbSvr.Ins, sql, svrSql, [], []);
+        });
+      }
       //注册返回按钮事件
       this.registerBackButtonAction();
     });
@@ -76,7 +78,7 @@ export class MyApp {
         this.keyboard.close();
         return;
       }
-      
+
       //如果想点击返回按钮隐藏toast或loading或Overlay就把下面加上
       // this.ionicApp._toastPortal.getActive() ||this.ionicApp._loadingPortal.getActive()|| this.ionicApp._overlayPortal.getActive()
       let activePortal = this.ionicApp._modalPortal.getActive() || this.ionicApp._toastPortal.getActive() || this.ionicApp._overlayPortal.getActive();

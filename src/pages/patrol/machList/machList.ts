@@ -5,6 +5,7 @@ import { PointListPage } from '../pointList/pointList';
 import { PatrolSvr } from '../../../services/services';
 import { LoggerSvr } from '../../../services/loggerSvr';
 import { NativeService } from '../../../services/nativeService';
+import { UISvr } from '../../../services/uiSvr';
 
 @Component({
     selector: 'page-MachList',
@@ -28,7 +29,8 @@ export class MachListPage {
         private navPara: NavParams,
         private patrolSvr: PatrolSvr,
         private logSvr: LoggerSvr,
-        private nativeService: NativeService
+        private nativeService: NativeService,
+        private uiSvr: UISvr
     ) {
         this.curPatrol.PatrolId = this.navPara.get('patrol');
     }
@@ -278,6 +280,8 @@ export class MachListPage {
         this.nativeService.barcodeScan().subscribe(text => {
             this.filtertTxt = text;
             this.filterMach();
+        }, err=>{
+            this.uiSvr.simpleTip(err);
         })
     }
 

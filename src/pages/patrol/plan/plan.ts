@@ -385,6 +385,7 @@ export class PlanPage {
         });
     }
 
+    /**删除待回收计划 */
     deleteLocalPatrolData(item){
         this.patrolSvr.deleteLocalPatrolDataById(item.LocalPatrolId, AppConfig.getInstance().UserId).then((res)=>{
             this.uiSvr.showLoading("删除成功!", 800);
