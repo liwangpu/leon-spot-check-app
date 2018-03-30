@@ -6,6 +6,7 @@ import { AboutPage } from './about/about';
 import { SyssetPage } from './sysset/sysset';
 import { UserSetPage } from './userSetting/userSetting';
 import { AppCfgSvr } from '../../services/appCfgSvr';
+import { NativeService } from '../../services/nativeService';
 
 @Component({
     templateUrl: './mine.html'
@@ -17,9 +18,10 @@ export class MinePage {
     constructor(
         private nav: NavController,
         private events: Events,
-        private appCfgSvr: AppCfgSvr
+        private appCfgSvr: AppCfgSvr,
+        private nativeService: NativeService
     ) {
-        this.user = new UserModel();        
+        this.user = new UserModel();
         this.user.ImgPath = './assets/imgs/user.png';
         this.events.subscribe('init/userId', (userid) => {
             //重新登录后获取用户系信息
@@ -29,12 +31,12 @@ export class MinePage {
     }
 
     ionViewWillEnter() {
-        
+
         if (this.appCfg.UserId > 0) {
             this.getCurUser(this.appCfg.UserId);
         } else {
             this.clearCurUsr();
-            this.login();
+            // this.login();
         }
 
     }
@@ -99,6 +101,11 @@ export class MinePage {
     /**系统设置 */
     sysSetting() {
         this.nav.push(SyssetPage);
+    }
+
+    /**检查更新 */
+    checkUpdate() {
+        this.nativeService.checkUpdate();
     }
 }
 

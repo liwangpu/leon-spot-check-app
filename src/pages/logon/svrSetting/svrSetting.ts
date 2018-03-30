@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavParams } from 'ionic-angular';
+import { NavParams, NavController } from 'ionic-angular';
 import { UISvr } from '../../../services/uiSvr';
 import { AppConfig } from '../../../common/appConfig';
 import { AppCfgSvr } from '../../../services/appCfgSvr';
@@ -20,12 +20,14 @@ export class SvrSettingPage {
         private uiSvr: UISvr,
         private navPara: NavParams,
         private appCfgSvr: AppCfgSvr,
-        private nativeService: NativeService
+        private nativeService: NativeService,
+        private nav: NavController
     ) {
         //TODO:测试使用
-        this.ipAdrr = '192.168.1.6';
-        this.suffix = 'pms4';
-        this.oldUrl = this.navPara.get('url');
+        this.ipAdrr = '192.168.1.215';
+        this.suffix = '';
+        this.port = '1397';
+        // this.oldUrl = this.navPara.get('url');
         this.newSvrUrl = 'http://' + this.ipAdrr + ':' + this.port ? this.port : '80' + '/' + this.suffix;
     }
 
@@ -43,7 +45,7 @@ export class SvrSettingPage {
             return false;
         }
         if (this.port) {
-            if (parseInt(this.port) < 0 || parseInt(this.port)) {
+            if (parseInt(this.port) < 0 || parseInt(this.port)>65535) {
                 this.uiSvr.alert('端口号错误', "请输入0~65535之间的整数");
                 return false;
             }
@@ -70,7 +72,8 @@ export class SvrSettingPage {
         if (this.validUrl()) {
             AppConfig.getInstance().setHMSServiceUrl(this.newSvrUrl);
             this.appCfgSvr.SaveOrUpdateSvrUrl(this.newSvrUrl, this.oldUrl ? false : true).then((res) => {
-                this.uiSvr.showLoading("数据保存成功!", 800);
+                this.uiSvr.showLoading("数据保存成功!", 300);
+                this.nav.pop();
             }, (err) => {
                 this.uiSvr.alert("数据保存失败!", "参考消息:" + err);
             });

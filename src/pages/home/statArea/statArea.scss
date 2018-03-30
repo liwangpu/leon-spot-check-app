@@ -20,10 +20,18 @@ page-home-stat-area {
         height: 100% !important;
     }
     ion-avatar img {
-        width: 3em !important;
-        height: 3em !important;
-        max-width: 3em !important; //any size
-        max-height: 3em !important; //any size
-        margin: auto;
+        width: 5em !important;
+        height: 5em !important;
+        max-width: 5em !important; //any size
+        max-height: 5em !important; //any size
+        margin: 3em auto 0.5em auto;
+        zoom: 5em;
+    }
+
+    .adv1{
+        background: url('../assets/imgs/ads1.jpg') no-repeat center !important;
+    }
+    .adv2{
+        background: url('../assets/imgs/ads2.jpg') no-repeat center !important;
     }
 }

@@ -24,6 +24,7 @@ export class MachListPage {
     MachFetching = false;
     hasMoreRec = true;
     filtertTxt: string;
+    isRefresh: boolean = false;//刷新标记
 
     constructor(private navCtrl: NavController,
         private navPara: NavParams,
@@ -101,7 +102,6 @@ export class MachListPage {
                                         area.PointDone = areas.PointDone;
                                         area.ParentName = areas.Parent.NodeName;
                                     }
-                                    console.log(areas);
                                     _mach.ParentName = areas.Parent.NodeName;
                                     tmpList.push(area);
                                     tmpList.push(_mach);
@@ -227,9 +227,15 @@ export class MachListPage {
      * @param refresher 
      */
     doRefresh(refresher) {
+        if (this.isRefresh) {
+            refresher.complete();
+            return;
+        }
+        this.isRefresh = true;
         this.initMachPaging();
         this.loadMoreMach().then(() => {
             refresher.complete();
+            this.isRefresh = false;
         })
     }
 
@@ -280,7 +286,7 @@ export class MachListPage {
         this.nativeService.barcodeScan().subscribe(text => {
             this.filtertTxt = text;
             this.filterMach();
-        }, err=>{
+        }, err => {
             this.uiSvr.simpleTip(err);
         })
     }

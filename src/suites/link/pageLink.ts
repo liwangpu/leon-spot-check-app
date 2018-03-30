@@ -11,7 +11,7 @@ export class PageLink implements OnInit {
 
     }
 
-    @HostListener('dblclick') onClick() {
+    @HostListener('click') onClick() {
         if (this.pageLink) {
             if (this.pageLink) {
                 this.navCtrl.push(this.pageLink, this.pdata);

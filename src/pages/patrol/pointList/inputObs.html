@@ -18,7 +18,7 @@
 <ion-content>
 
     <form #ObsForm="ngForm" (ngSubmit)="saveObsData()">
-        <ion-list>
+        <ion-list radio-group="PatrolObs">
             <ion-item-divider>
                 <ion-icon name="help-circle" color="primary"></ion-icon>
                 {{MeasLocation.NodeName}} - {{MeasNode.NodeName}}
@@ -27,17 +27,18 @@
                 <ion-label>{{item.NAME}}</ion-label>
                 <ion-radio (ionSelect)="getObsValues(item)" [(checked)]="item.selected"></ion-radio>
             </ion-item>
+            <ion-item no-lines>
+                <span item-start style="color: #f34235">{{alarmText}}</span>
+                <div style="float: right;">
+                    <h3 *ngFor="let alarm of alarmSet">{{alarm.Text}}: {{alarm.Value}}</h3>
+                </div>
+            </ion-item>
             <ion-item-divider>
                 <h4>备注说明</h4>
             </ion-item-divider>
             <ion-item>
-                <ion-textarea placeholder="点击输入点检备注" rows="3" name="des" [(ngModel)]="Des"></ion-textarea>
+                <ion-textarea placeholder="点击输入点检备注" rows="3" name="des" [(ngModel)]="Des" clearInput="true"></ion-textarea>
             </ion-item>
-        </ion-list>
-        <ion-list>
-            <button ion-item full text-center detail-none type="submit">
-                保存
-            </button>
         </ion-list>
     </form>
 
@@ -59,7 +60,7 @@
         </ion-item-sliding>
     </ion-list>
 </ion-content>
-<ion-footer>
+<ion-footer #myFooter>
     <ion-toolbar>
         <ion-buttons start>
             <button ion-button icon-left (click)="goPre()">

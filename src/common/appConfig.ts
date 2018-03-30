@@ -17,6 +17,8 @@ export class AppConfig {
     private _strPassword: string;
     private _iUserId: number;
     private _strUserName: string;
+    private _isAndroid: boolean;
+    private _isIos: boolean;
 
     /**
      * App调试模式
@@ -45,6 +47,26 @@ export class AppConfig {
      */
     public setIsMobile(isMobile: boolean) {
         this._isMobile = isMobile;
+    }
+
+    /**获取真机环境是否为安卓设备 */
+    public get isAndroid(): boolean {
+        return this._isAndroid;
+    }
+
+    /**设置为安卓环境 */
+    public setIsAndroid(isAndroid: boolean) {
+        this._isAndroid = isAndroid;
+    }
+
+    /**获取真机环境是否为安卓设备 */
+    public get isIos(): boolean {
+        return this._isIos;
+    }
+
+    /**设置为ios环境 */
+    public setIsIos(isIos: boolean) {
+        this._isIos = isIos;
     }
 
     /**

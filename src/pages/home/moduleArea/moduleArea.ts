@@ -1,35 +1,29 @@
-import { Component,OnInit, AfterViewChecked, AfterViewInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PlanPage } from '../../patrol/plan/plan';
 import { MessagePage } from '../../message/message';
+import { EditModAreaPage } from '../editModArea/editModArea';
 
 @Component({
     selector: 'page-home-module-area',
     templateUrl: 'moduleArea.html'
 })
-export class ModuleAreaPage implements OnInit,AfterViewChecked, AfterViewInit {
+export class ModuleAreaPage {
 
-    ngAfterViewChecked(): void {
-        // console.log(111,' module view ngAfterViewChecked');
-    }
-    ngAfterViewInit(): void {
-        // throw new Error("Method not implemented.");
-        // console.log(111,' module view inter');
-    }
-    ngOnInit(): void {
-    //    console.log(111,' module view ngOnInit');
-    }
     patrolMode = PlanPage;
     messageMode = MessagePage;
+    editModAres = EditModAreaPage;
+
+    @Input() MyModArr: Array<any> = [];
     constructor() {
-        // console.log(111,' module view constructor');
+
     }
 
-    // ngAfterViewChecked() {
-    //     console.log(111,' module view inter');
-    // }
-
-    // ngOnDestroy() {
-    //     console.log(111,' module view ngOnDestroy');
-    // }
+    getItemUrl(url) {
+        if (url == "messageMode") {
+            return this.messageMode;
+        }else{
+            return "";
+        }
+    }
 }
 

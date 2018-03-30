@@ -55,7 +55,7 @@ export class PatrolAsyncService {
      * @param planId 
      * @param itimes 
      */
-    public getPatrolPlanData(userId: number | string, devId: string, planId: number | string, itimes?: number | string): Observable<any> {
+    public getPatrolPlanData(userId: number, devId: string, planId: number | string, itimes?: number | string): Observable<any> {
         var rest = '/PmsApi/PatrolApi/GetPlanData';
         let durl = `${AppConfig.getInstance().HMSServiceUrl}/${rest}`;
         let httpOptions = {
@@ -140,11 +140,16 @@ export class PatrolAsyncService {
                     let curPlan = datas.transPlans[idx];
                     let curNRow = datas.transNRows[idx];
                     let curNodes = datas.transNodes[idx];
-                    let deletePatrolPro = this.patrolSvr.deletePatrol(curPlan.DBNO, curPlan.PLANID, curPlan.DOWNTIME);
+
+                    //**只删除未开始的巡检计划 */
+                    let deletePatrolPro = this.patrolSvr.deleteUnStartPatrol(curPlan.DBNO, curPlan.PLANID, curPlan.DOWNTIME, userId);
                     let insertPatrolPro = this.patrolSvr.insertPatrol(curNRow);
                     let deletePatrolNodePro = this.patrolSvr.deletePatrolNode(curPlan.DBNO, curPlan.PLANID, curPlan.VERSION);
-                    let insertPatrolNodePro = this.patrolSvr.insertPatrolNode(curNodes);
-
+                    let insertPatrolNodePro = this.patrolSvr.insertPatrolNode(curNodes).then((res)=>{
+                        //若服务器巡检计划对应的测点已删除,则删除对应的巡检任务T_PatrolTask及未回收的数据
+                        this.patrolSvr.deletPatrolTask(userId, curPlan.PLANID);
+                    });
+                    
                     return deletePatrolPro.then(() => {
                         return insertPatrolPro;
                     }).then(() => {

@@ -1,28 +1,25 @@
 <ion-header>
     <ion-navbar>
-        <button ion-button menuToggle>
-            <ion-icon name="menu"></ion-icon>
-        </button>
         <ion-title>我的点检</ion-title>
     </ion-navbar>
-    <div padding class="seg-header">
-        <ion-segment [(ngModel)]="planType">
-            <ion-segment-button value="downloaded">已下载</ion-segment-button>
-            <ion-segment-button value="recycle">待回收</ion-segment-button>
-        </ion-segment>
-    </div>
 </ion-header>
 <ion-content>
     <ion-refresher (ionRefresh)="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
 
-    <!-- <ion-card>
-        <ion-list>
-            <ion-item-divider>
-                <h3>本期点检情况</h3>
-            </ion-item-divider>
-        </ion-list>
+    <ion-list no-lines>
+        <ion-item-divider>
+            <h3 item-start>
+                本期点检情况
+                <!-- <ion-icon name="person" item-end color="primary">{{userName}}</ion-icon> -->
+            </h3>
+            <ion-note item-end>
+                <ion-icon class="login-item" color="primary" name="person" >
+                    {{userName}}
+                </ion-icon>
+            </ion-note>
+        </ion-item-divider>
         <ion-grid>
             <ion-row>
                 <ion-col col-3>上次点检</ion-col>
@@ -48,181 +45,66 @@
                     <span class="assertive">{{stat.MissTouch}}</span>项</ion-col>
             </ion-row>
         </ion-grid>
-    </ion-card>
+    </ion-list>
 
-    <ion-card>
-        <ion-list>
-            <ion-item-divider>
-                <h3>历史数据</h3>
-                <button ion-button icon-left clear item-end (click)="onUploadExec()">
-                    <ion-icon name="cloud-upload"></ion-icon>
-                    立即回收
-                </button>
-            </ion-item-divider>
-        </ion-list>
+    <ion-list no-lines>
+        <ion-item-divider>
+            <h3>历史数据</h3>
+            <button ion-button icon-left item-end (click)="doUploadPatrol()">
+                <ion-icon name="cloud-upload"></ion-icon>
+                回收计划
+            </button>
+        </ion-item-divider>
         <ion-grid>
             <ion-row>
-                <ion-col col-3>待回收</ion-col>
+                <ion-col col-3>待回收计划</ion-col>
                 <ion-col col-3>{{stat.WaitRecive}}项</ion-col>
             </ion-row>
         </ion-grid>
-    </ion-card>
+    </ion-list>
 
-    <ion-card>
-        <ion-list>
-            <ion-item-divider>
-                <h3>本期点检</h3>
-                <button ion-button item-end clear icon-left (click)="onDownLoadPlan()">
-                    <ion-icon name="cloud-download"></ion-icon>
-                    下载计划
-                </button>
-            </ion-item-divider>
+    <ion-list no-lines>
+        <ion-item-divider>
+            <h3>本期点检</h3>
+            <button ion-button item-end icon-left (click)="onDownLoadPlan()">
+                <ion-icon name="cloud-download"></ion-icon>
+                下载计划
+            </button>
+        </ion-item-divider>
 
-            <ion-item-sliding *ngFor="let item of PlanList">
-                <ion-item (click)="onDoPatrol(item)">
-                    <ion-icon name="list-box-outline" color="primary" item-start></ion-icon>
-                    <h3>{{item.PlanName}}
-                    </h3>
-                    <p>执行期：{{item.StartTime|date:'MM-dd HH:mm'}} ~ {{item.EndTime|date:'MM-dd HH:mm'}}</p>
-                    <ion-note item-end>{{item.FinishedPoint}}/{{item.TotalPoint}}</ion-note>
-                </ion-item>
-                <ion-item-options>
-                    <button ion-button color="secondary" (click)="doView(item)">查看数据</button>
-                    <button ion-button color="danger" (click)="doDelete(item)">删除</button>
-                </ion-item-options>
-            </ion-item-sliding>
+        <ion-item-sliding *ngFor="let item of PlanList">
+            <ion-item (click)="onDoPatrol(item)">
+                <ion-icon name="list-box-outline" color="primary" item-start></ion-icon>
+                <h3>{{item.PlanName}}
+                </h3>
+                <p>执行期：{{item.StartTime|date:'MM-dd HH:mm'}} ~ {{item.EndTime|date:'MM-dd HH:mm'}}</p>
+                <ion-note item-end>{{item.FinishedPoint}}/{{item.TotalPoint}}</ion-note>
+            </ion-item>
+            <ion-item-options>
+                <!-- <button ion-button color="secondary" (click)="doView(item)">查看数据</button> -->
+                <button ion-button color="danger" (click)="doDelete(item)">删除</button>
+            </ion-item-options>
+        </ion-item-sliding>
 
-        </ion-list>
-    </ion-card>
+    </ion-list>
 
-    <ion-card>
-        <ion-list>
-            <ion-item-divider>
-                <h3>下期点检</h3>
-            </ion-item-divider>
+    <ion-list no-lines>
+        <ion-item-divider>
+            <h3>下期点检</h3>
+        </ion-item-divider>
 
-            <ion-item-sliding *ngFor="let item of PlanListNext">
-                <ion-item >
-                    <ion-icon name="time-outline" color="primary" item-start></ion-icon>
-                    <h3>{{item.PlanName}}</h3>
-                    <p>执行期：{{item.StartTime|date:'MM-dd HH:mm'}} ~ {{item.EndTime|date:'MM-dd HH:mm'}}</p>
-                    <ion-note item-end>未到时间</ion-note>
-                </ion-item>
-                <ion-item-options>
-                    <button ion-button color="danger" (click)="doDelete(item)">删除</button>
-                </ion-item-options>
-            </ion-item-sliding>
-            
-        </ion-list>
-    </ion-card> -->
+        <ion-item-sliding *ngFor="let item of PlanListNext">
+            <ion-item>
+                <ion-icon name="time-outline" color="primary" item-start></ion-icon>
+                <h3>{{item.PlanName}}</h3>
+                <p>执行期：{{item.StartTime|date:'MM-dd HH:mm'}} ~ {{item.EndTime|date:'MM-dd HH:mm'}}</p>
+                <ion-note item-end>未开始</ion-note>
+            </ion-item>
+            <ion-item-options>
+                <button ion-button color="danger" (click)="doDelete(item)">删除</button>
+            </ion-item-options>
+        </ion-item-sliding>
 
+    </ion-list>
 
-    <div [ngSwitch]="planType">
-        <div *ngSwitchCase="'downloaded'">
-            <ion-list>
-                <ion-item-divider color="primary">
-                    <h3>本期点检情况</h3>
-                </ion-item-divider>
-                <ion-grid>
-                    <ion-row>
-                        <ion-col col-3>完成计划</ion-col>
-                        <ion-col col-3>
-                            <span class="positive">{{stat.PatrolFinish}}</span>/{{stat.PatrolCnt}}</ion-col>
-                        <ion-col col-3>完成测点</ion-col>
-                        <ion-col col-3>
-                            <span class="positive">{{stat.TaskFinish}}</span>/{{stat.TaskCnt}}</ion-col>
-                    </ion-row>
-                    <ion-row>
-                        <ion-col col-3>状态报警</ion-col>
-                        <ion-col col-3>
-                            <span class="assertive">{{stat.AlarmCnt}}</span>项</ion-col>
-                        <ion-col col-3>标签漏碰</ion-col>
-                        <ion-col col-3>
-                            <span class="assertive">{{stat.MissTouch}}</span>项</ion-col>
-                    </ion-row>
-                </ion-grid>
-            </ion-list>
-
-
-            <ion-list no-lines>
-                <ion-item-divider color="primary">
-                    <h3>本期点检计划</h3>
-                    <button ion-button item-end icon-left (click)="onDownLoadPlan()">
-                        <ion-icon name="cloud-download"></ion-icon>
-                        下载计划
-                    </button>
-                </ion-item-divider>
-
-                <ion-item-sliding *ngFor="let item of PlanList">
-                    <button ion-item (click)="onDoPatrol(item)">
-                        <ion-icon name="list-box-outline" color="primary" item-start></ion-icon>
-                        <h3>{{item.PlanName}}
-                        </h3>
-                        <p>执行期：{{item.StartTime|date:'MM-dd HH:mm'}} ~ {{item.EndTime|date:'MM-dd HH:mm'}}</p>
-                        <ion-note item-end>{{item.FinishedPoint}}/{{item.TotalPoint}}</ion-note>
-                    </button>
-                    <ion-item-options>
-                        <button ion-button color="secondary" (click)="doView(item)">查看数据</button>
-                        <button ion-button color="danger" (click)="doDelete(item)">删除</button>
-                    </ion-item-options>
-                </ion-item-sliding>
-
-            </ion-list>
-        </div>
-
-        <div *ngSwitchCase="'recycle'">
-            <ion-list>
-                <ion-item-divider color="primary">
-                    <ion-label>本期点检情况</ion-label>
-                </ion-item-divider>
-                <ion-grid>
-                    <ion-row>
-                        <ion-col col-3>完成计划</ion-col>
-                        <ion-col col-3>
-                            <span class="positive">{{stat.PatrolFinish}}</span>/{{stat.PatrolCnt}}</ion-col>
-                        <ion-col col-3>完成测点</ion-col>
-                        <ion-col col-3>
-                            <span class="positive">{{stat.TaskFinish}}</span>/{{stat.TaskCnt}}</ion-col>
-                    </ion-row>
-                    <ion-row>
-                        <ion-col col-3>状态报警</ion-col>
-                        <ion-col col-3>
-                            <span class="assertive">{{stat.AlarmCnt}}</span>项</ion-col>
-                        <ion-col col-3>标签漏碰</ion-col>
-                        <ion-col col-3>
-                            <span class="assertive">{{stat.MissTouch}}</span>项</ion-col>
-                    </ion-row>
-                </ion-grid>
-            </ion-list>
-
-            <ion-list>
-                <ion-item-divider>
-                    <ion-checkbox #checkAll (click)="changeAllCheck(checkAll.checked)"></ion-checkbox>
-                    <ion-label>待回收计划</ion-label>
-                    <button ion-button item-end icon-left (click)="doUpload()">
-                        <ion-icon name="cloud-upload"></ion-icon>
-                        回收计划
-                    </button>
-                </ion-item-divider>
-
-                <ion-item-sliding *ngFor="let item of PlanListUnUpload">
-                    <ion-item>
-                        <ion-checkbox [ngModel]="item.checked" (click)="onCheck(item.LocalPatrolId, checkItem.checked)" #checkItem></ion-checkbox>
-                        <ion-label>{{item.PlanName}}
-                            <p>执行期：{{item.StartTime|date:'MM-dd HH:mm'}} ~ {{item.EndTime|date:'MM-dd HH:mm'}}</p>
-                            <p>剩余周期: {{item.Cyc}}</p>
-                        </ion-label>
-
-                        <ion-note item-end>{{item.FinishedPoint}}/{{item.TotalPoint}}
-                        </ion-note>
-                    </ion-item>
-                    <ion-item-options>
-                        <button ion-button color="danger" (click)="deleteLocalPatrolData(item)">删除</button>
-                    </ion-item-options>
-                </ion-item-sliding>
-
-            </ion-list>
-        </div>
-
-    </div>
 </ion-content>

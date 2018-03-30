@@ -3,42 +3,45 @@
         <ion-title>计划下载</ion-title>
     </ion-navbar>
 </ion-header>
-
-<ion-content>
+<ion-item-divider *ngIf="isScolled" [ngStyle]="dividerStyle">
+    <button ion-button clear item-start style="padding:0;">
+        <ion-checkbox (click)="changeAllCheck(checkAll.checked)" #checkAll [ngModel]="selectAll" ></ion-checkbox>
+        <ion-label>{{checkAllText}}</ion-label>
+    </button>
+    <button ion-button item-end icon-left  (click)="onNextStep()">
+        <ion-icon name="cloud-download"></ion-icon>
+        下一步
+    </button>
+</ion-item-divider>
+<ion-content (ionScroll)="scrollHandler($event)">
     <ion-refresher (ionRefresh)="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
-    <ion-card>
-        <ion-list>
-            <ion-item-divider>
-                <!-- <h3>可下载的计划</h3> -->
-                <button ion-button clear item-start style="padding:0;">
-                    <ion-checkbox (click)="changeAllCheck(checkAll.checked)" #checkAll></ion-checkbox>
-                    <ion-label>{{checkAllText}}</ion-label>
-                </button>
-                <button ion-button item-end icon-left clear (click)="onNextStep()">
-                    <ion-icon name="cloud-download"></ion-icon>
-                    下一步
-                </button>
-            </ion-item-divider>
-
-            <ion-item *ngFor="let item of planList">
-                <ion-label>
-                    <h3>{{item.PlanName}}</h3>
-                    <p>执行周期:{{item.Period}} {{item.PeriodUnitName}}</p>
-                </ion-label>
-
-                <ion-checkbox (click)="onCheck(item.PatrolPlanId,checkItem.checked)" #checkItem [ngModel]="item.checked"></ion-checkbox>
-            </ion-item>
-            <!-- <ion-item *ngIf="planList.length>0">
+    <ion-list>
+        <ion-item-divider #divider>
+            <!-- <h3>可下载的计划</h3> -->
+            <button ion-button clear item-start style="padding:0;">
+                <ion-checkbox (click)="changeAllCheck(checkAll.checked)" #checkAll [ngModel]="selectAll" ></ion-checkbox>
                 <ion-label>{{checkAllText}}</ion-label>
-                <ion-checkbox (click)="changeAllCheck(checkAll.checked)" #checkAll></ion-checkbox>
-            </ion-item> -->
-        </ion-list>
-    </ion-card>
+            </button>
+            <button ion-button item-end icon-left  (click)="onNextStep()">
+                <ion-icon name="cloud-download"></ion-icon>
+                下一步
+            </button>
+        </ion-item-divider>
 
-    <!-- <button ion-button full (click)='onNextStep()'>
-        <ion-icon name='cloud-download'></ion-icon>
-        下一步
-    </button> -->
+        <ion-item *ngFor="let item of planList">
+            <ion-label>
+                <h3>{{item.PlanName}}</h3>
+                <p>执行周期:{{item.Period}} {{item.PeriodUnitName}}</p>
+            </ion-label>
+
+            <ion-checkbox (click)="onCheck(item.PatrolPlanId,checkItem.checked)" #checkItem [ngModel]="item.checked"></ion-checkbox>
+            <ion-note item-end><h3>{{item.IsDownload}}</h3>
+                <p style="color:#32db64">{{item.hasChanged}}</p>
+            </ion-note>
+        </ion-item>
+
+    </ion-list>
+
 </ion-content>

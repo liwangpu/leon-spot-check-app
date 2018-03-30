@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ActionSheetController, AlertController, ModalController, Alert } from 'ionic-angular';
+import { NavController, ActionSheetController } from 'ionic-angular';
 import { PatrolAsyncService } from '../../../services/patrolSvr/patrolAsync';
 import { MachListPage } from './../machList/machList';
 import { CommonHelper } from '../../../common/commonHelper';
@@ -9,10 +9,10 @@ import { AppConfig } from '../../../common/appConfig';
 import { PatrolSvr, HistorySvr } from '../../../services/services';
 import { UISvr } from '../../../services/uiSvr';
 import { LogonPage } from '../../logon/logon';
+import { UploadPatrolPage } from '../uploadPatrol/uploadPatrol';
 @Component({
     selector: 'page-patrol-plan',
-    templateUrl: './plan.html',
-    providers: [PatrolAsyncService]
+    templateUrl: './plan.html'
 })
 export class PlanPage {
     PlanList: Array<any>;
@@ -20,19 +20,14 @@ export class PlanPage {
     commonHelper: CommonHelper;
     userName: string;
     stat: any;
-    alert: Alert;
-    planType: string = "downloaded";
-    PlanListUnUpload: Array<any>;
-    selectedPlan: Array<Number>;
+    userId: number;
 
     constructor(private navCtrl: NavController,
         private patrolSvr: PatrolSvr,
         private historySvr: HistorySvr,
         private uiSvr: UISvr,
         private patrolAsync: PatrolAsyncService,
-        private actionSheetCtrl: ActionSheetController,
-        private alertCtrl: AlertController,
-        private modalCtrl: ModalController
+        private actionSheetCtrl: ActionSheetController
     ) {
         this.stat = {
             LastPatrol: {
@@ -55,18 +50,19 @@ export class PlanPage {
         this.PlanList = [];
         this.PlanListNext = [];
         this.commonHelper = CommonHelper.getInstance();
-        this.userName = AppConfig.getInstance().UserName;
-        this.PlanListUnUpload = [];
-        this.selectedPlan = [];
+        this.userId = AppConfig.getInstance().UserId;
     }
 
 
     ionViewDidEnter() {
+        if (!AppConfig.getInstance().UserName) {
+            this.showLogin();
+        }
+        this.getLastPatrol();
+        this.getWaiteRcv();
         this.getPlanList();
         this.getNextPlanList();
-        this.getWaiteRcv();
-        this.getLastPatrol();
-        this.getUnUploadPlan();
+        this.userName = AppConfig.getInstance().UserName;
     }
 
     doRefresh(refresher) {
@@ -82,38 +78,15 @@ export class PlanPage {
      */
     onDownLoadPlan() {
         if (!AppConfig.getInstance().UserName) {
-            this.alert = this.alertCtrl.create({
-                title: '确认登录',
-                message: '当前尚未登录任何用户，是否登录后继续操作？',
-                buttons: [
-                    {
-                        text: '取消',
-                        role: 'cancel',
-                        handler: () => {
-                            console.log('Cancel clicked');
-                        }
-                    },
-                    {
-                        text: '确认',
-                        handler: () => {
-                            this.showLogin();
-                        }
-                    }
-                ]
-            });
-            this.alert.present();
+            this.showLogin();
         } else {
-            this.navCtrl.push(DownPage);
+            this.navCtrl.push(DownPage, { planList: this.PlanList });
         }
     }
 
     /**显示登录 */
     private showLogin() {
-        let modal = this.modalCtrl.create(LogonPage);
-        modal.present();
-        modal.onDidDismiss(() => {
-            this.ionViewDidEnter();
-        });
+        this.navCtrl.push(LogonPage);
     }
 
     /**
@@ -130,6 +103,15 @@ export class PlanPage {
         this.uiSvr.loading(defer(), "数据上传中", () => {
             this.getWaiteRcv();
         });
+    }
+
+    /**上传动作 */
+    doUploadPatrol() {
+        if (!AppConfig.getInstance().UserName) {
+            this.showLogin();
+        } else {
+            this.navCtrl.push(UploadPatrolPage, { Stat: this.stat });
+        }
     }
 
     /**
@@ -253,29 +235,26 @@ export class PlanPage {
 
     /**仅删除该次巡检 */
     delPatrol(patrol) {
-        this.patrolSvr.deletePatrolById(patrol.LocalPatrolId).then((res) => {
-            //刷新计划列表和巡检数据统计
-            this.ionViewDidEnter();
-        }, (err) => {
+        this.historySvr.getWaitReceiveCnt(this.userId, patrol.LocalPatrolId).then((cres) => {
+            if (cres > 0) {
+                this.uiSvr.confirm('', '当前计划存在未回收的巡检数据，是否继续删除?', () => {
+                    this.patrolSvr.deletePatrolById(patrol.LocalPatrolId).then((res) => {
+                        //刷新计划列表和巡检数据统计
+                        this.ionViewDidEnter();
+                    }, (err) => {
+                        this.uiSvr.alert('数据删除失败', patrol.PlanName + ' 删除失败！参考信息：' + err);
+                    });
+                })
+            } else {
+                this.patrolSvr.deletePatrolById(patrol.LocalPatrolId).then((res) => {
+                    //刷新计划列表和巡检数据统计
+                    this.ionViewDidEnter();
+                }, (err) => {
+                    this.uiSvr.alert('数据删除失败', patrol.PlanName + ' 删除失败！参考信息：' + err);
+                });
+            }
+        }).catch((err) => {
             this.uiSvr.alert('数据删除失败', patrol.PlanName + ' 删除失败！参考信息：' + err);
-        });
-    }
-
-    /**获取待回收计划数据 */
-    private getUnUploadPlan() {
-        this.patrolSvr.getUnUploadPlan(AppConfig.getInstance().UserId).then((pList) => {
-            this.PlanListUnUpload = pList;
-        })
-    }
-
-    /**
-     * 删除计划及其巡检、节点，但不删除其历史数据 
-     * */
-    delPlan(patrol) {
-        this.patrolSvr.deletePlan(patrol.DBID, patrol.PlanId).then((res) => {
-            this.ionViewDidEnter();
-        }, (err) => {
-            this.uiSvr.alert('计划数据删除失败', patrol.PlanName + ' 删除失败！参考信息：' + err);
         });
     }
 
@@ -284,24 +263,60 @@ export class PlanPage {
      * @param patrol 
      */
     delPlanAndData(patrol) {
-        this.patrolSvr.deletePlanAndData(patrol.DBID, patrol.PlanId).then((res) => {
-            this.ionViewDidEnter();
-        }, (err) => {
+        //验证是否存在未回收的数据
+        this.historySvr.getWaitReceiveCnt(this.userId, patrol.LocalPatrolId).then((cres) => {
+            if (cres > 0) {
+                this.uiSvr.confirm('', '当前计划存在未回收的巡检数据，是否继续删除?', () => {
+                    this.patrolSvr.deletePlanAndData(patrol.DBID, patrol.PlanId, this.userId).then((res) => {
+                        this.ionViewDidEnter();
+                    }, (err) => {
+                        this.uiSvr.alert('计划数据删除失败', patrol.PlanName + ' 删除失败！参考信息：' + err);
+                    });
+                });
+            } else {
+                this.patrolSvr.deletePlanAndData(patrol.DBID, patrol.PlanId, this.userId).then((res) => {
+                    this.ionViewDidEnter();
+                }, (err) => {
+                    this.uiSvr.alert('计划数据删除失败', patrol.PlanName + ' 删除失败！参考信息：' + err);
+                });
+            }
+        }).catch((err) => {
             this.uiSvr.alert('计划数据删除失败', patrol.PlanName + ' 删除失败！参考信息：' + err);
         });
+
     }
 
+    /**删除所有数据 */
     clearAll() {
-        this.patrolSvr.clearPlan().then((res) => {
-            this.historySvr.clearData().then((hres) => {
-                this.ionViewDidEnter();
-            }, (herr) => {
-                this.uiSvr.alert('计划数据删除失败', ' 清空所有计划和巡检数据失败！参考信息：' + herr);
+        this.historySvr.getWaitReceiveCnt(this.userId).then((cres) => {
+            if (cres > 0) {
+                this.uiSvr.confirm('', '存在未回收的巡检数据，是否继续删除?', () => {
+                    this.patrolSvr.clearPlan(this.userId).then((res) => {
+                        this.historySvr.clearData(this.userId).then((hres) => {
+                            this.ionViewDidEnter();
+                        }, (herr) => {
+                            this.uiSvr.alert('计划数据删除失败', ' 清空所有计划和巡检数据失败！参考信息：' + herr);
 
-            });
-        }, (err) => {
+                        });
+                    }, (err) => {
+                        this.uiSvr.alert('计划数据删除失败', ' 清空所有计划和巡检数据失败！参考信息：' + err);
+                    })
+                });
+            } else {
+                this.patrolSvr.clearPlan(this.userId).then((res) => {
+                    this.historySvr.clearData(this.userId).then((hres) => {
+                        this.ionViewDidEnter();
+                    }, (herr) => {
+                        this.uiSvr.alert('计划数据删除失败', ' 清空所有计划和巡检数据失败！参考信息：' + herr);
+                    });
+                }, (err) => {
+                    this.uiSvr.alert('计划数据删除失败', ' 清空所有计划和巡检数据失败！参考信息：' + err);
+                })
+            }
+        }).catch((err) => {
             this.uiSvr.alert('计划数据删除失败', ' 清空所有计划和巡检数据失败！参考信息：' + err);
-        })
+        });
+
     }
 
     /**查看巡检计划数据 */
@@ -310,7 +325,7 @@ export class PlanPage {
 
     }
 
-    /** 删除巡检数据  */
+    /** 删除动作  */
     doDelete(item) {
         let acts = this.actionSheetCtrl.create({
             title: '请选择需要执行的动作',
@@ -318,11 +333,6 @@ export class PlanPage {
                 text: '删除该次巡检',
                 handler: () => {
                     this.delPatrol(item);
-                }
-            }, {
-                text: '删除该计划',
-                handler: () => {
-                    this.delPlan(item);
                 }
             }, {
                 text: '删除该计划及其巡检数据',
@@ -345,54 +355,5 @@ export class PlanPage {
             ]
         });
         acts.present();
-    }
-
-    /**选择计划 */
-    onCheck(patrolId, isCheck) {
-        if (isCheck) {
-            this.selectedPlan.push(patrolId);
-        } else {
-            this.selectedPlan.splice(this.selectedPlan.indexOf(patrolId), 1);
-        }
-    }
-
-    /**全选 */
-    changeAllCheck(isChecked) {
-        if (isChecked) {
-            this.PlanListUnUpload.forEach(item => {
-                item.checked = true;
-                this.onCheck(item.LocalPatrolId, true);
-            });
-        } else {
-            this.PlanListUnUpload.forEach(item => {
-                item.checked = false;
-                this.onCheck(item.LocalPatrolId, false);
-            });
-        }
-    }
-
-    /**回收计划 */
-    doUpload() {
-        if (this.selectedPlan.length === 0) {
-            this.uiSvr.simpleTip('请选择需要回收的计划!');
-            return;
-        }
-        let defer = () => {
-            return this.patrolAsync.uploadPatrolDataById('', AppConfig.getInstance().UserId, devinfo, this.selectedPlan).toPromise();
-        };
-        this.uiSvr.loading(defer(), "数据上传中", () => {
-            this.getUnUploadPlan();
-        });
-    }
-
-    /**删除待回收计划 */
-    deleteLocalPatrolData(item){
-        this.patrolSvr.deleteLocalPatrolDataById(item.LocalPatrolId, AppConfig.getInstance().UserId).then((res)=>{
-            this.uiSvr.showLoading("删除成功!", 800);
-            //刷新计划列表和巡检数据统计
-            this.ionViewDidEnter();
-        }, (err) => {
-            this.uiSvr.alert('巡检数据删除失败', item.PlanName + ' 删除失败！参考信息：' + err);
-        });
     }
 }

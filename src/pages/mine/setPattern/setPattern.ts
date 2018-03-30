@@ -3,6 +3,7 @@ import { NavParams, NavController } from 'ionic-angular';
 import $ from "jquery";
 import * as PatternLock from 'PatternLock';
 import { AppCfgSvr } from '../../../services/appCfgSvr';
+import { UISvr } from '../../../services/uiSvr';
 
 @Component({
     selector: 'set-pattern',
@@ -22,7 +23,8 @@ export class SetPatternPage {
     constructor(
         private params: NavParams,
         private nav: NavController,
-        private AppCfgSvr: AppCfgSvr
+        private AppCfgSvr: AppCfgSvr,
+        private uiSvr: UISvr
     ) {
         this.userId = this.params.get('UserId');
 
@@ -76,7 +78,10 @@ export class SetPatternPage {
 
             } else {
                 this.savePattern(this.userId, pattern).then((res) => {
-                    if (res) this.nav.pop();
+                    if (res) {
+                        this.uiSvr.showToast('手势码设置成功!', 800, 'middle');
+                        this.nav.pop();
+                    }
                 })
             }
         }

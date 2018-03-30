@@ -25,8 +25,8 @@
             </ion-item-divider>
             <ion-item>
                 <ion-icon name="pencil" item-start color="primary"></ion-icon>
-                <ion-input type="number" id="numTxt" [step]="0.00001" [min]="0" [(ngModel)]="NewData.Numeric" placeholder="点击输入当前值" name="numeric"
-                    (ionChange)="checkLevel()"></ion-input>
+                <ion-input type="number" #numTxt [step]="0.00001" [min]="0" [(ngModel)]="NewData.Numeric" placeholder="点击输入当前值" name="numeric"
+                    (ionChange)="checkLevel()" clearInput="true"></ion-input>
                 <span item-end style="color: #f34235">{{alarmText}}</span>
             </ion-item>
             <ion-item no-lines>
@@ -38,14 +38,14 @@
                 <h4>备注说明</h4>
             </ion-item-divider>
             <ion-item>
-                <ion-textarea placeholder="点击输入点检备注" [ngModel]="NewData.Des" rows="3" name="des"></ion-textarea>
+                <ion-textarea placeholder="点击输入点检备注" [ngModel]="NewData.Des" rows="3" name="des" clearInput="true"></ion-textarea>
             </ion-item>
         </ion-list>
-        <ion-list>
+        <!-- <ion-list>
             <button ion-item full text-center detail-none type="submit">
                 保存
             </button>
-        </ion-list>
+        </ion-list> -->
     </form>
 
     <ion-list>
@@ -78,7 +78,7 @@
     </ion-list>
 
 </ion-content>
-<ion-footer>
+<ion-footer #myFooter>
     <ion-toolbar>
         <ion-buttons start>
             <button ion-button icon-left (click)="goPre()">

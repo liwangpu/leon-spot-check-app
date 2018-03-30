@@ -1,17 +1,17 @@
-<p class="area-tip">
-    <ion-icon name="md-list"></ion-icon> 当前设备状态</p>
+<!-- <p class="area-tip">
+    <ion-icon name="md-list"></ion-icon> 当前设备状态</p> -->
 <ion-grid>
-    <ion-row>
-        <ion-col class="square-panel small">
+    <ion-row style="border:none !important;">
+        <ion-col col-3 class="square-panel small">
             <app-inlet-suite [title]='"预警"' [url]='preWarningUrl' [pdata]='preWarningParams' [color]='"#5495D5"' [innerTitle]='preWarningCount'></app-inlet-suite>
         </ion-col>
-        <ion-col class="square-panel small">
+        <ion-col col-3 class="square-panel small">
             <app-inlet-suite [title]='"警告"' [url]='warningUrl' [pdata]='warningParams' [color]='"#E5C537"' [innerTitle]='warningCount'></app-inlet-suite>
         </ion-col>
-        <ion-col class="square-panel small">
+        <ion-col col-3 class="square-panel small">
             <app-inlet-suite [title]='"报警"' [url]='alarmUrl' [pdata]='alarmParams' [color]='"#E7A03A"' [innerTitle]='alarmCount'></app-inlet-suite>
         </ion-col>
-        <ion-col class="square-panel small">
+        <ion-col col-3 class="square-panel small">
             <app-inlet-suite [title]='"危险"' [url]='dangerUrl' [pdata]='dangerParams' [color]='"#D55745"' [innerTitle]='dangerCount'></app-inlet-suite>
         </ion-col>
     </ion-row>

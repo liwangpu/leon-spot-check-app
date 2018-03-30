@@ -7,6 +7,7 @@ import { StatusAreaPage } from './statusArea/statusArea';
 import { ArrivalRateAdv } from './statArea/arrival/arrivalRate';
 import { ModuleAreaPage } from './moduleArea/moduleArea';
 import { AppSuiteModule } from '../../suites/suite.module';
+import { EditModAreaPage } from './editModArea/editModArea';
 @NgModule({
     imports: [
         IonicModule
@@ -19,6 +20,7 @@ import { AppSuiteModule } from '../../suites/suite.module';
         , ModuleAreaPage
         , StatusReportAdv
         , ArrivalRateAdv
+        , EditModAreaPage
     ],
     entryComponents: [
         HomePage
@@ -27,6 +29,7 @@ import { AppSuiteModule } from '../../suites/suite.module';
         , ModuleAreaPage
         , StatusReportAdv
         , ArrivalRateAdv
+        , EditModAreaPage
     ],
     exports: [IonicModule]
 })

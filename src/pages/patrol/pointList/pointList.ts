@@ -6,6 +6,7 @@ import { LoggerSvr } from '../../../services/loggerSvr';
 import { InputNumPage } from './inputNumber';
 import { InputObsPage } from './inputObs';
 import { CommonHelper } from '../../../common/commonHelper';
+import { AppConfig } from '../../../common/appConfig';
 
 @Component({
     templateUrl: 'pointList.html',
@@ -28,7 +29,9 @@ export class PointListPage {
     PtObs: Array<any>;
     selectType: string = 'all';
     AlarmMap: any;
+    ObsMap: any;
     helper: CommonHelper = CommonHelper.getInstance();
+    isRefresh = false;
 
     constructor(
         private navPara: NavParams,
@@ -47,9 +50,13 @@ export class PointListPage {
         this.AlarmMap.set('2', '警告');
         this.AlarmMap.set('3', '报警');
         this.AlarmMap.set('4', '危险');
+
+        this.ObsMap = new Map();
+        this.ObsMap.set('1', '是');
+        this.ObsMap.set('2', '否');
     }
 
-    ionViewDidEnter() {
+    ionViewWillEnter() {
         this.NodeList = [];
         this.NodeListUnFinished = [];
         this.doRefresh();
@@ -116,10 +123,15 @@ export class PointListPage {
     }
 
     doRefresh() {
+        if (this.isRefresh) {
+            return;
+        }
+        this.isRefresh = true;
         this.NodeList = [];
         this.NodeListUnFinished = [];
         this.fetchNodes().then((res) => {
             this.NodeList.forEach(node => {
+                // this.refreshLastValue(node.NodeId);
                 if ((!node.LastData && this.NodeListUnFinished.indexOf(node) < 0) ||
                     (node.LastData && !node.LastData.ValueStr && this.NodeListUnFinished.indexOf(node) < 0)) {
                     this.NodeListUnFinished.push(node);
@@ -145,6 +157,7 @@ export class PointListPage {
             if (this.NodeListUnFinished.length == 1) {
                 this.NodeListUnFinished = [];
             }
+            this.isRefresh = false;
         });
     }
 
@@ -223,11 +236,22 @@ export class PointListPage {
         let alarmset = JSON.parse(node.AlarmSet);
         let alarmTemp = [];
         if (alarmset.RULES.RULE && alarmset.RULES.RULE.LEVEL) {
+            //抄表
             alarmset.RULES.RULE.LEVEL.forEach(level => {
                 alarmTemp.push({
                     Level: level.LV,
                     Text: this.AlarmMap.get(level.LV),
                     Value: level.MAX
+                });
+            });
+        }
+        if (alarmset.RULES.RULE && alarmset.RULES.RULE.OBS) {
+            //观察量
+            alarmset.RULES.RULE.OBS.forEach(level => {
+                alarmTemp.push({
+                    Level: level._LEVEL,
+                    Text: this.AlarmMap.get(level._LEVEL),
+                    Value: this.ObsMap.get(level.__text)
                 });
             });
         }
@@ -287,7 +311,7 @@ export class PointListPage {
         return new Promise<any>((resolve, reject) => {
             let pt = this.getCachedNode(nid);
             if (pt) {
-                this.historySvr.getLastedData(pt.NodeId, pt.DBID, 5).then((listdata) => {
+                this.historySvr.getLastedData(pt.NodeId, pt.DBID, 5, AppConfig.getInstance().UserId).then((listdata) => {
                     if (listdata && listdata.length) {
                         this.NodeListUnFinished.splice(this.NodeListUnFinished.indexOf(pt), 1);
                         let hdata = listdata[0];
@@ -317,11 +341,17 @@ export class PointListPage {
         let tmpNode = this.MeasNode;
         let nidx = 0;
         // let this.NodeListUnFinished = this.selectSeg == "unfinished" ? this.NodeListUnFinished : this.NodeList;
-        for (let idx = 0; idx < this.NodeListUnFinished.length; idx++) {
-            if (this.NodeListUnFinished[idx].NodeType == nodeType.Point)
+        let NodeListTmp = [];
+        if (this.selectType == "all") {
+            NodeListTmp = this.NodeList;
+        } else {
+            NodeListTmp = this.NodeListUnFinished;
+        }
+        for (let idx = 0; idx < NodeListTmp.length; idx++) {
+            if (NodeListTmp[idx].NodeType == nodeType.Point)
                 nidx++;
-            if (this.NodeListUnFinished[idx].OrderNum > this.MeasNode.OrderNum && this.NodeListUnFinished[idx].NodeType == nodeType.Point) {
-                tmpNode = this.NodeListUnFinished[idx];
+            if (NodeListTmp[idx].OrderNum > this.MeasNode.OrderNum && NodeListTmp[idx].NodeType == nodeType.Point) {
+                tmpNode = NodeListTmp[idx];
                 break;
             }
         }
@@ -345,12 +375,18 @@ export class PointListPage {
      */
     prePoint() {
         let tmpNode = this.MeasNode;
-        let nidx = this.PointCnt + 1;
-        for (let idx = this.NodeListUnFinished.length - 1; idx >= 0; idx--) {
-            if (this.NodeListUnFinished[idx].NodeType == nodeType.Point)
+        let nidx = this.PointCnt + 1
+        let NodeListTmp = [];
+        if (this.selectType == "all") {
+            NodeListTmp = this.NodeList;
+        } else {
+            NodeListTmp = this.NodeListUnFinished;
+        };
+        for (let idx = NodeListTmp.length - 1; idx >= 0; idx--) {
+            if (NodeListTmp[idx].NodeType == nodeType.Point)
                 nidx--;
-            if (this.NodeListUnFinished[idx].OrderNum < this.MeasNode.OrderNum && this.NodeListUnFinished[idx].NodeType == nodeType.Point) {
-                tmpNode = this.NodeListUnFinished[idx];
+            if (NodeListTmp[idx].OrderNum < this.MeasNode.OrderNum && NodeListTmp[idx].NodeType == nodeType.Point) {
+                tmpNode = NodeListTmp[idx];
                 break;
             }
         }

@@ -1,5 +1,3 @@
-<ion-header></ion-header>
-
 <ion-content padding class="login-content">
 
   <form #logonForm="ngForm" (ngSubmit)="login()">
@@ -7,39 +5,62 @@
       <div *ngIf="LogonedUsr.length==0">
         <img [src]="model.ImgPath" />
       </div>
-      <ion-slides (ionSlideDidChange)="slideChanged()" speed="1000">
+      <ion-slides (ionSlideWillChange)="slideChanged()" speed="300">
         <ion-slide *ngFor="let item of LogonedUsr">
           <div class="avator">
             <img [src]="item.ImgPath?item.ImgPath:model.ImgPath" />
           </div>
-          {{item.UserName}}
+          <span *ngIf="containUsr" class="avator-name">{{item.UserName}}</span>
         </ion-slide>
       </ion-slides>
     </div>
 
-    <ion-row>
+    <ion-list no-lines>
+      <ion-item>
+        <ion-icon name="person" item-start></ion-icon>
+        <ion-input #username type="text" placeholder="请输入用户名" required [(ngModel)]="model.LoginName" name="LoginName" clearInput="true"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="lock" item-start></ion-icon>
+        <ion-input #pwd type="password" placeholder="请输入密码" required [(ngModel)]="model.Password" name="Password" clearInput="true"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="globe" item-start></ion-icon>
+        <ion-input type="text" placeholder="配置服务地址" required [(ngModel)]="curUrl" name="SvrUrl" readonly="true" (ionFocus)="svrSetting()"></ion-input>
+      </ion-item>
+      <div padding>
+        <button ion-button full round [disabled]="!logonForm.form.valid" color="light" type="submit">登录</button>
+      </div>
+    </ion-list>
+    <!-- <ion-row no-padding>
       <ion-col col-1></ion-col>
       <ion-col col-10 class="input-container">
         <ion-icon name="person" class="logon-icon"></ion-icon>
-        <input type="text" class="logon-input" placeholder="请输入用户名" required [(ngModel)]="model.LoginName" name="LoginName" />
-
+        <input #username type="text" class="logon-input" placeholder="请输入用户名" required [(ngModel)]="model.LoginName" name="LoginName"
+          (ngModelChange)="changeUsr()" />
       </ion-col>
       <ion-col col-1>
       </ion-col>
     </ion-row>
 
-    <ion-row>
+    <ion-row no-padding>
       <ion-col col-1></ion-col>
       <ion-col col-10 class="input-container">
         <ion-icon name="lock" class="logon-icon"></ion-icon>
-        <input type="password" class="logon-input" placeholder="请输入密码" required [(ngModel)]="model.Password" name="Password" />
+        <input #pwd type="password" class="logon-input" placeholder="请输入密码" required [(ngModel)]="model.Password" name="Password"
+        />
       </ion-col>
       <ion-col col-1></ion-col>
     </ion-row>
 
-    <div padding class="set-content" (click)="svrSetting()">
-      <span>服务配置</span>
-    </div>
+    <ion-row no-padding>
+      <ion-col col-1></ion-col>
+      <ion-col col-10 class="input-container" (click)="svrSetting()">
+        <ion-icon name="globe" class="logon-icon"></ion-icon>
+        <input class="logon-input" readonly="readonly" placeholder="配置服务地址" required name="SvrUrl" [ngModel]="curUrl" />
+      </ion-col>
+      <ion-col col-1></ion-col>
+    </ion-row>
 
     <ion-row>
       <ion-col col-1></ion-col>
@@ -47,12 +68,12 @@
         <button ion-button full round [disabled]="!logonForm.form.valid" color="light" type="submit">登录</button>
       </ion-col>
       <ion-col col-1></ion-col>
-    </ion-row>
+    </ion-row> -->
   </form>
 
 </ion-content>
 
-<ion-footer>
+<ion-footer #myFooter>
   <div class="verify-container">
     <a class="verify-link" (click)="onVerifyChange()">手势密码</a>
   </div>

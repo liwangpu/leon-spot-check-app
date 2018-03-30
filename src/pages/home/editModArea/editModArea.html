@@ -1,0 +1,22 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>定制我的应用</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <!--以复选框的形式列出系统所有模块(除去公告,点检,消息之外),选择或反选之后更新到数据表(以用户为单位,包含模块名称,url)-->
+    <ion-list>
+        <ion-item-divider>
+            <h3>模块列表</h3>
+        </ion-item-divider>
+        <ion-item-group reorder="true" (ionItemReorder)="reorderItems($event)" >
+            <ion-item *ngFor="let item of Mods">
+                <ion-label>{{item.ModName}}</ion-label>
+                <ion-checkbox item-end color="secondary" (ionChange)="saveMyMods(item)" [(ngModel)]="item.Selected"></ion-checkbox>
+            </ion-item>
+        </ion-item-group>
+
+    </ion-list>
+
+</ion-content>

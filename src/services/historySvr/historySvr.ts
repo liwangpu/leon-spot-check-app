@@ -13,7 +13,7 @@ export class HistorySvr {
 	 * 自定义provider之间相互调用的依赖注入问题，会导致初始化时提示“Can't resolve all parameters for HistorySvr(undefined)
 	 * 在重新构造实例时需遵循以下格式，具体原因还有待进一步研究
 	 */
-	constructor( @Inject(forwardRef(() => DataBase)) private db: DataBase,
+	constructor(@Inject(forwardRef(() => DataBase)) private db: DataBase,
 		private logSvr: LoggerSvr
 	) {
 		this.helper = CommonHelper.getInstance();
@@ -77,6 +77,56 @@ export class HistorySvr {
 	}
 
 	/**
+	 * 获取测点在当前计划执行周期内的历史数据(没有回收的),返回主键ID,没有则返回0
+	 * @param planId 
+	 * @param nodeId 
+	 * @param userId 
+	 */
+	getHisByPlan(planId: number, nodeId: number, userId: number): Promise<any> {
+		return new Promise<any>((resolve, reject) => {
+			let cTime = this.helper.dateFormat(new Date(), 'yyyy-MM-dd hh:mm:ss');
+			let sql = `select t.PatrolDataId from ${this.tbPatrolData} t, T_LocalPatrol l where l.StartTime<=? and l.EndTime>? and t.SampleTime>=l.StartTime and t.SampleTime<=l.EndTime and l.Executor=t.Excutor and t.Excutor=? and l.PlanId = t.PlanId and t.PlanId=? and t.NodeId=? and t.IsUpload=0`;
+			this.db.execute(this.db.Ins, sql, [cTime, cTime, userId, planId, nodeId]).then((res) => {
+				let rdata = this.helper.copySingle(res);
+				if (rdata) {
+					resolve(rdata.PatrolDataId);
+				} else {
+					resolve(0);
+				}
+			}, (err) => {
+				this.logSvr.log("get his data faild:", err, true);
+				reject(err);
+			})
+		});
+	}
+
+	/**
+	 * 更新巡检结果,覆盖已有记录的测量值
+	 * @param patrolDataId 
+	 * @param isObs 
+	 * @param obsId 
+	 * @param obsName 
+	 * @param measValue 
+	 */
+	updatePatrol(patrolDataId: number, isObs: number, obsId, obsName: string, measValue: string, alarmLevel): Promise<any> {
+		return new Promise<any>((resolve, reject) => {
+			let sql = `update ${this.tbPatrolData} set obsId=?, obsName=?, SampleTime=?, CurAlarm=? where PatrolDataId=?`;
+			let cTime = this.helper.dateFormat(new Date(), 'yyyy-MM-dd hh:mm:ss');
+			let vbinds = [obsId, obsName, cTime, alarmLevel, patrolDataId];
+			if (isObs == 0) {
+				sql = `update ${this.tbPatrolData} set measValue=?, SampleTime=?, CurAlarm=? where PatrolDataId=?`;
+				vbinds = [measValue, cTime, alarmLevel, patrolDataId];
+			}
+			this.db.execute(this.db.Ins, sql, vbinds).then((res) => {
+				resolve(res);
+			}, (err) => {
+				this.logSvr.log("updatePatrol data faild:", err, true);
+				reject(err);
+			});
+		});
+	}
+
+	/**
 	 * 删除巡检数据，并视情况删除执行记录（task)
 	 * @param dataId 巡检数据id
 	 */
@@ -137,11 +187,12 @@ export class HistorySvr {
 	 * 删除计划的历次巡检数据
 	 * @param dbId DBID
 	 * @param planId 巡检计划id
+	 * @param userId 执行用户ID
 	 */
-	deletePlanHistory(dbId: string, planId: number): Promise<any> {
+	deletePlanHistory(dbId: string, planId: number, userId: number): Promise<any> {
 		return new Promise<any>((resolve, reject) => {
-			let sql = 'delete from ' + this.tbPatrolData + ' where DBID=? and PlanId=? ';
-			this.db.execute(this.db.Ins, sql, [dbId, planId]).then((res) => {
+			let sql = 'delete from ' + this.tbPatrolData + ' where DBID=? and PlanId=? and Excutor=?';
+			this.db.execute(this.db.Ins, sql, [dbId, planId, userId]).then((res) => {
 				this.logSvr.log('delete plan history  Data success ', res);
 				resolve(res.rowsAffected);
 			}, (err) => {
@@ -156,11 +207,12 @@ export class HistorySvr {
 
 	/**
 	 * 删除所有巡检计划
+	 * @param userId 执行用户ID
 	 */
-	clearData(): Promise<any> {
+	clearData(userId: number): Promise<any> {
 		return new Promise<any>((resolve, reject) => {
-			let sql = 'delete from ' + this.tbPatrolData;
-			this.db.execute(this.db.Ins, sql, []).then((res) => {
+			let sql = 'delete from ' + this.tbPatrolData + ' where Excutor=?';
+			this.db.execute(this.db.Ins, sql, [userId]).then((res) => {
 				this.logSvr.log('clear patrol  Data success ', res);
 				resolve(res.rowsAffected);
 			}, (err) => {
@@ -279,9 +331,12 @@ export class HistorySvr {
 	 * 获取待回收的数据总数
 	 * @param userId 用户id
 	 */
-	getWaitReceiveCnt(userId: number): Promise<any> {
+	getWaitReceiveCnt(userId: number, localPatrolId?: number): Promise<any> {
 		return new Promise<any>((resolve, reject) => {
-			let sql = 'select count(*) as cnt from ' + this.tbPatrolData + ' where IsUpload=0 and Excutor=? ';
+			let sql = `select count(l.LocalPatrolId) as cnt from T_LocalPatrol l where l.FinishedPoint>0 and exists(select 1 from T_PatrolData t, T_PatrolTask p where p.PatrolDataId=t.PatrolDataId and t.IsUpload=0 and t.Excutor=l.Executor and t.Excutor=? and l.PlanId = t.PlanId  and t.SampleTime>=l.StartTime and t.SampleTime<=l.EndTime)`
+			if (localPatrolId > 0) {
+				sql += ` and l.LocalPatrolId=${localPatrolId}`;
+			}
 			this.db.execute(this.db.Ins, sql, [userId]).then((res) => {
 				this.logSvr.log('getWaitReciveCnt success ', res);
 				resolve(res.rows.item(0).cnt);
@@ -415,11 +470,12 @@ export class HistorySvr {
 	 * @param nodeId 测点ID
 	 * @param DBID 
 	 * @param len 
+	 * @param userId 
 	 */
-	getLastedData(nodeId: number, DBID: string, len: number): Promise<any> {
+	getLastedData(nodeId: number, DBID: string, len: number, userId: number): Promise<any> {
 		return new Promise<any>((resolve, reject) => {
-			let sql = 'select * from ' + this.tbPatrolData + ' where NodeId=? and DBID=? order by SampleTime desc limit 0,? ';
-			this.db.execute(this.db.Ins, sql, [nodeId, DBID, len]).then((res) => {
+			let sql = 'select * from ' + this.tbPatrolData + ' where NodeId=? and DBID=? and Excutor=? order by SampleTime desc limit 0,? ';
+			this.db.execute(this.db.Ins, sql, [nodeId, DBID, userId, len]).then((res) => {
 				this.logSvr.log('getLastedData success ', res);
 				let list = this.helper.copyRows(res);
 				resolve(list);

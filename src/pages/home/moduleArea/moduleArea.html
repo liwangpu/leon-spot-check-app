@@ -1,4 +1,4 @@
-<p class="area-tip">
+<!-- <p class="area-tip">
 
     <ion-grid>
         <ion-row>
@@ -8,20 +8,36 @@
             <ion-col style="text-align:right;">管理</ion-col>
         </ion-row>
     </ion-grid>
-</p>
-<ion-grid>
+</p> -->
+<ion-grid no-padding>
     <ion-row>
-        <ion-col class="square-panel">
+        <ion-col col-3 class="square-panel">
             <app-inlet-suite [title]='"公告"' [iconName]='"notifications-outline"'></app-inlet-suite>
         </ion-col>
-        <ion-col class="square-panel">
-            <app-inlet-suite [title]='"点检"' [url]='patrolMode' [iconName]='"list-box-outline"'></app-inlet-suite>
+        <ion-col col-3 class="square-panel">
+            <app-inlet-suite [title]='"点检"' [url]='patrolMode' [iconName]='"speedometer-outline"'></app-inlet-suite>
         </ion-col>
-        <ion-col class="square-panel">
+        <ion-col col-3 class="square-panel">
             <app-inlet-suite [title]='"消息"' [url]='messageMode' [iconName]='"text-outline"'></app-inlet-suite>
         </ion-col>
-        <ion-col class="square-panel">
-            <app-inlet-suite [title]='"备件"' [iconName]='"speedometer-outline"'></app-inlet-suite>
+        <!-- <ion-col col-3 class="square-panel">
+            <app-inlet-suite [title]='"备件"' [iconName]='"git-branch"'></app-inlet-suite>
+        </ion-col>
+
+        <ion-col col-3 class="square-panel">
+            <app-inlet-suite [title]='"故障"' [iconName]='""' [simpleText]='"故"' [iconZoom]='"1.0"'></app-inlet-suite>
+        </ion-col>
+        <ion-col col-3 class="square-panel">
+            <app-inlet-suite [title]='"履历"' [iconName]='""' [simpleText]='"履"' [iconZoom]='"1.0"'></app-inlet-suite>
+        </ion-col>
+        <ion-col col-3 class="square-panel">
+            <app-inlet-suite [title]='"精度"' [iconName]='""' [simpleText]='"精"' [iconZoom]='"1.0"'></app-inlet-suite>
+        </ion-col> -->
+        <ion-col col-3 class="square-panel" *ngFor="let item of MyModArr">
+            <app-inlet-suite [title]='item.title' [url]='getItemUrl(item.url)' [iconName]='item.iconName' [simpleText]='item.simpleText' [iconZoom]='"1.0"'></app-inlet-suite>
+        </ion-col>
+        <ion-col col-3 class="square-panel">
+            <app-inlet-suite [title]='"更多"' [url]="editModAres" [iconName]='"add"'></app-inlet-suite>
         </ion-col>
     </ion-row>
 </ion-grid>

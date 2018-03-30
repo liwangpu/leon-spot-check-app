@@ -97,15 +97,33 @@ export class PatrolSvr {
                 reject('insert Patrol参数错误');
             } else {
                 let sql = 'insert into ' + this.tbPatrol + ' (DBID ,PlanId ,PlanName ,PlanVersion , Executor , ExecutorName,ExecutorLogin,TotalPoint ,FinishedPoint,DownTime ,StartTime ,EndTime,LastExec,ServerUrl ) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?) ';
-                this.db.insertCollection(this.db.Ins, sql, pdataColl).then((res) => {
-                    this.logSvr.log("insert Patrol success:", {
-                        res: res,
-                        number: pdataColl.length
-                    });
-                    resolve(res);
-                }).catch((err) => {
-                    this.logSvr.log("insert Patrol faild:", err, true);
-                    reject(err);
+                pdataColl.forEach(data => {
+                    let sqlPatrol = `select * from ${this.tbPatrol} where PlanId=? and Executor=? and StartTime=? and EndTime=?`;
+                    this.db.execute(this.db.Ins, sqlPatrol, [data[1], data[4], data[10], data[11]]).then((tres) => {
+                        let patrol = this.helper.copySingle(tres);
+                        if (patrol) {
+                            let updSql = `update ${this.tbPatrol} set PlanName=?, PlanVersion=?,TotalPoint=?,DownTime=?,LastExec where LocalPatrolId=?`;
+                            this.db.execute(this.db.Ins, updSql, [data[2], data[3], data[7], data[9], data[12], patrol.LocalPatrolId]).then((res) => {
+                                this.logSvr.log("update Patrol success:", {
+                                    LocalPatrolId: patrol.LocalPatrolId
+                                });
+                                resolve(patrol.LocalPatrolId);
+                            }, (err) => {
+                                this.logSvr.log("update Patrol faild:", err, true);
+                                reject(err);
+                            })
+                        } else {
+                            this.db.execute(this.db.Ins, sql, data).then((res) => {
+                                this.logSvr.log("insert Patrol success:", {
+                                    res: res
+                                });
+                                resolve(res);
+                            }).catch((err) => {
+                                this.logSvr.log("insert Patrol faild:", err, true);
+                                reject(err);
+                            });
+                        }
+                    })
                 });
             }
         });
@@ -161,17 +179,43 @@ export class PatrolSvr {
         });
     };
 
+    /**
+     * 删除巡检任务极其巡检数据(计划已变更,并删除已经下载过的节点的任务)
+     * @param userId 
+     */
+    public deletPatrolTask(userId, planId): Promise<any> {
+        return new Promise((resolve, reject) => {
+            //删除巡检任务
+            let sql1 = `delete from T_PatrolData where PatrolDataId in (select T_PatrolTask.PatrolDataId from ${this.tbPatrolTask} where not exists(select 1 from T_LocalPatrol, T_PatrolNode where T_LocalPatrol.LocalPatrolId = T_PatrolTask.LocalPatrolId and T_LocalPatrol.Executor=? and T_LocalPatrol.PlanId=? and  T_PatrolNode.NodePath = T_PatrolTask.NodePath and T_LocalPatrol.PlanVersion = T_PatrolNode.PlanVersion ))`;
+            //删除巡检任务
+            let sql2 = `delete from ${this.tbPatrolTask} where not exists(select 1 from T_LocalPatrol, T_PatrolNode where T_LocalPatrol.LocalPatrolId = T_PatrolTask.LocalPatrolId and T_LocalPatrol.Executor=? and T_LocalPatrol.PlanId=? and  T_PatrolNode.NodePath = T_PatrolTask.NodePath and T_LocalPatrol.PlanVersion = T_PatrolNode.PlanVersion )`;
+            this.db.nestedExecute(this.db.Ins, sql1, sql2, [userId, planId], [userId, planId]).then((res) => {
+                //更新巡检计划已完成的节点数量
+                let sql2 = `update T_LocalPatrol set FinishedPoint=(select count(1) from ${this.tbPatrolTask} where T_LocalPatrol.LocalPatrolId = T_PatrolTask.LocalPatrolId) where PlanId=?`;
+                this.db.execute(this.db.Ins, sql2, [planId]).then((res) => {
+                    resolve(res);
+                }).catch((err) => {
+                    this.logSvr.log("delete PatrolTask faild:", err, true);
+                    reject(err);
+                });
+            }).catch((err) => {
+                this.logSvr.log("delete PatrolTask faild:", err, true);
+                reject(err);
+            })
+        });
+    };
 
     /**
-     * 删除执行期结束时间晚于给定的时间的巡检计划
+     * 删除执行期结束时间大于给定的时间的巡检计划
      * @param dbId DBID
      * @param planId 巡检计划ID
      * @param ctime 指定时间
+     * @param userid 执行人ID
      */
-    deletePatrol(dbId: string, planId: number, ctime: string): Promise<any> {
+    deletePatrol(dbId: string, planId: number, ctime: string, userid): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            let vbinds = [dbId, planId];
-            let sqlfrom = ' from ' + this.tbPatrol + ' where DBID=? and PlanId=? ';
+            let vbinds = [dbId, planId, userid];
+            let sqlfrom = ' from ' + this.tbPatrol + ' where DBID=? and PlanId=? and Executor=?';
             if (ctime) {
                 sqlfrom += ' and EndTime>=? ';
                 vbinds.push(ctime);
@@ -179,6 +223,32 @@ export class PatrolSvr {
             let sql = 'delete ' + sqlfrom;
             let sqltask = ' delete from ' + this.tbPatrolTask + ' where LocalPatrolId in ( select LocalPatrolId ' + sqlfrom + ') ';
             this.db.nestedExecute(this.db.Ins, sqltask, sql, vbinds, vbinds).then((res) => {
+                this.logSvr.log("delete Patrol success:", res);
+                resolve(true);
+            }).catch((err) => {
+                this.logSvr.log("delete Patrol faild:", err, true);
+                reject(err);
+            });
+        });
+    }
+
+    /**
+     * 只删除未开始的巡检计划
+     * @param dbId 
+     * @param planId 
+     * @param ctime 
+     * @param userid 
+     */
+    deleteUnStartPatrol(dbId: string, planId: number, ctime: string, userid): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            let vbinds = [dbId, planId, userid];
+            let sql = 'delete from ' + this.tbPatrol + ' where DBID=? and PlanId=? and Executor=?';
+            if (ctime) {
+                sql += ' and StartTime>=? and EndTime>=?';
+                vbinds.push(ctime);
+                vbinds.push(ctime);
+            }
+            this.db.execute(this.db.Ins, sql, vbinds).then((res) => {
                 this.logSvr.log("delete Patrol success:", res);
                 resolve(true);
             }).catch((err) => {
@@ -264,11 +334,12 @@ export class PatrolSvr {
      * 删除巡检计划任务
      * @param dbId DBID
      * @param planId 计划ID
+     * @param userid
      */
-    deletePlanTask(dbId: string, planId: number): Promise<any> {
+    deletePlanTask(dbId: string, planId: number, userid: number): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            let vbinds = [dbId, planId];
-            let sql = 'delete from ' + this.tbPatrolTask + ' where DBID=? and PlanId=? ';
+            let vbinds = [dbId, planId, userid];
+            let sql = 'delete from ' + this.tbPatrolTask + ' where DBID=? and PlanId=? and LocalPatrolId in(select LocalPatrolId from T_LocalPatrol where Executor=?)';
             this.db.execute(this.db.Ins, sql, vbinds).then((res) => {
                 this.logSvr.log("delete PlanTask success:", res);
                 resolve(true);
@@ -287,10 +358,10 @@ export class PatrolSvr {
      * @param dbId DBID
      * @param planId 计划ID
      */
-    deletePlan(dbId: string, planId: number): Promise<any> {
+    deletePlan(dbId: string, planId: number, userid: number): Promise<any> {
         return new Promise<any>((resolve, reject) => {
 
-            this.deletePatrol(dbId, planId, null).then((result) => {
+            this.deletePatrol(dbId, planId, null, userid).then((result) => {
                 this.deletPatrolNode(dbId, planId, null).then((res) => {
                     resolve(true);
                 }, (nerr) => {
@@ -306,13 +377,14 @@ export class PatrolSvr {
      * 删除巡检计划并删除其巡检数据
      * @param dbId DBID
      * @param planId 计划ID
+     * @param userid
      */
-    deletePlanAndData(dbId: string, planId: number): Promise<any> {
+    deletePlanAndData(dbId: string, planId: number, userid: number): Promise<any> {
         return new Promise<any>((resolve, reject) => {
 
-            this.deletePlan(dbId, planId).then((res) => {
-                this.deletePlanTask(dbId, planId).then((tres) => {
-                    this.historySvr.deletePlanHistory(dbId, planId).then((hres) => {
+            this.deletePlan(dbId, planId, userid).then((res) => {
+                this.deletePlanTask(dbId, planId, userid).then((tres) => {
+                    this.historySvr.deletePlanHistory(dbId, planId, userid).then((hres) => {
                         resolve(hres);
                     }, (herr) => {
                         reject(herr);
@@ -328,14 +400,18 @@ export class PatrolSvr {
 
     /**
      * 清空所有的计划和巡检执行信息，不含历史数据
+     * 1.删除当前用户巡检计划的节点
+     * 2.删除当前用户巡检计划的任务
+     * 3.删除当前用户的巡检计划
+     * @param userid
      */
-    clearPlan(): Promise<any> {
+    clearPlan(userid: number): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            let sqlPatrol = 'delete from ' + this.tbPatrol;
-            let sqlNode = 'delete from ' + this.tbPatrolNode;
-            let sqlTask = 'delete from ' + this.tbPatrolTask;
-            this.db.nestedExecute(this.db.Ins, sqlPatrol, sqlNode, [], []).then((res) => {
-                this.db.execute(this.db.Ins, sqlTask, []).then((tres) => {
+            let sqlTask = 'delete from ' + this.tbPatrolTask + ' where LocalPatrolId in(select LocalPatrolId from T_LocalPatrol where Executor=?)';
+            let sqlNode = 'delete from ' + this.tbPatrolNode + ' where PlanId in(select distinct PlanId from T_LocalPatrol where Executor=?)';
+            let sqlPatrol = 'delete from ' + this.tbPatrol + ' where Executor=?';
+            this.db.nestedExecute(this.db.Ins, sqlTask, sqlNode, [userid], [userid]).then((res) => {
+                this.db.execute(this.db.Ins, sqlPatrol, [userid]).then((tres) => {
                     resolve(tres);
                 }, (terr) => {
                     reject(terr);
@@ -815,12 +891,12 @@ export class PatrolSvr {
             this.checkEmarkTouch(emarkId).then((touch) => {
                 Object.assign(touched, touch);
                 // alarmLevel = this.alarmSvr.checkAlarm(node, measValue);
-                if (node.IsObjs) {
+                if (node.IsObs == 1) {
                     alarmLevel = this.alarmSvr.checkObsAlarm(node, measValue);
                 } else {
                     alarmLevel = this.alarmSvr.checkNumericAlarm(node, measValue);
                 }
-                this.historySvr.getLastedData(node.NodeId, node.DBID, 1).then((listLast) => {
+                this.historySvr.getLastedData(node.NodeId, node.DBID, 1, userId).then((listLast) => {
                     let lastData = listLast && listLast.length ? listLast[0] : null;
                     if (lastData && lastData.IsUpload == 0 && this.helper.dateDiff(cdate, this.helper.toDatetime(lastData.SampleTime)) < 5 * 60 * 1000) {
                         this.historySvr.updateNumericData(lastData.PatrolDataId, measValue, accuracy, cTime, alarmLevel, userId, userName, '').then((ures) => {
@@ -880,25 +956,37 @@ export class PatrolSvr {
             this.checkEmarkTouch(emarkId).then((touch) => {
                 Object.assign(touched, touch);
                 // alarmLevel = this.alarmSvr.checkAlarm(node, obsIds.join(','));
-                if (node.IsObjs) {
+                if (node.IsObs == 1) {
                     alarmLevel = this.alarmSvr.checkObsAlarm(node, obsIds.join(','));
                 } else {
                     alarmLevel = this.alarmSvr.checkNumericAlarm(node, obsIds.join(','));
                 }
                 let hisData = [node.DBID, planId, node.NodeId, 0, 1, obsIds.join(','), obsNames.join(','), '', cTime, 0, touched.IsTouch ? 1 : 0, touched.TouchTime, 0, 0, 0, alarmLevel, 0, 0, 0, 0, 0, 0, 0, userId, userName, '', memo];
-                this.historySvr.insertData(hisData).then((dataId) => {
-                    historyId = dataId;
-                    //插入 taskpatrol信息
-                    let taskData = [node.DBID, planId, historyId, patrolId, node.PatrolNodeId, cTime, node.OrderNum, node.NodePath];
-                    this.insertPatrolTask(taskData).then((taskId) => {
-                        this.UpdateFinishedPoint(patrolId);
-                        resolve(historyId);
-                    }, (tserr) => {
-                        reject(tserr);
-                    });
-                }, (herr) => {
-                    reject(herr);
+                //该测点在当前计划周期内是否已存在历史记录,存在则更新,否则插入新的记录
+                this.historySvr.getHisByPlan(planId, node.NodeId, userId).then((res) => {
+                    if (res > 0) {
+                        this.historySvr.updatePatrol(res, 1, obsIds.join(','), obsNames.join(','), null, alarmLevel).then(() => {
+                            historyId = res;
+                            this.UpdateFinishedPoint(patrolId);
+                            resolve(historyId);
+                        })
+                    } else {
+                        this.historySvr.insertData(hisData).then((dataId) => {
+                            historyId = dataId;
+                            //插入 taskpatrol信息
+                            let taskData = [node.DBID, planId, historyId, patrolId, node.PatrolNodeId, cTime, node.OrderNum, node.NodePath];
+                            this.insertPatrolTask(taskData).then((taskId) => {
+                                this.UpdateFinishedPoint(patrolId);
+                                resolve(historyId);
+                            }, (tserr) => {
+                                reject(tserr);
+                            });
+                        }, (herr) => {
+                            reject(herr);
+                        });
+                    }
                 });
+
             }, (toucherr) => {
                 reject(toucherr);
             });
@@ -934,7 +1022,7 @@ export class PatrolSvr {
 	 */
     getUnUploadPlan(userId: Number): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            let sql = 'select * from T_LocalPatrol l where l.FinishedPoint>0 and exists(select 1 from T_PatrolData t where t.IsUpload=0 and t.Excutor=? and l.PlanId = t.PlanId  and t.SampleTime>=l.StartTime and t.SampleTime<=l.EndTime)';
+            let sql = 'select * from T_LocalPatrol l where l.FinishedPoint>0 and exists(select 1 from T_PatrolData t, T_PatrolTask p where t.PatrolDataId = p.PatrolDataId and t.IsUpload=0 and t.Excutor=l.Executor and t.Excutor=? and l.PlanId = t.PlanId  and t.SampleTime>=l.StartTime and t.SampleTime<=l.EndTime)';
             this.db.execute(this.db.Ins, sql, [userId]).then((res) => {
                 let list = this.helper.copyRows(res);
                 for (let item of list) {
@@ -983,13 +1071,14 @@ export class PatrolSvr {
      */
     deleteLocalPatrolDataById(localPatrolId: number, userId: number): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            let sql = "delete from T_PatrolData where IsUpload=0 and Excutor=? and exists(select 1 from T_LocalPatrol l where l.PlanId = T_PatrolData.PlanId and l.Executor=T_PatrolData.Excutor and T_PatrolData.SampleTime>=l.StartTime and T_PatrolData.SampleTime<=l.EndTime and l.LocalPatrolId=?)";
-            //更新巡检计划已完成测点数
-            let sql2 = "update T_LocalPatrol set FinishedPoint=0 where LocalPatrolId=?";
-            this.db.nestedExecute(this.db.Ins, sql, sql2, [userId, localPatrolId], [localPatrolId]).then((res) => {
-                //删除本地巡检任务
-                let sql3 = "delete from " + this.tbPatrolTask + " where LocalPatrolId=?";
-                this.db.execute(this.db.Ins, sql3, [localPatrolId]);
+            //先删除巡检任务
+            let sql1 = "delete from " + this.tbPatrolTask + " where PatrolDataId in (select PatrolDataId from T_PatrolData where IsUpload=0 and Excutor=? and exists(select 1 from T_LocalPatrol l where l.PlanId = T_PatrolData.PlanId and l.Executor=T_PatrolData.Excutor and T_PatrolData.SampleTime>=l.StartTime and T_PatrolData.SampleTime<=l.EndTime and l.LocalPatrolId=?))";
+            //再删除巡检结果
+            let sql2 = "delete from T_PatrolData where IsUpload=0 and Excutor=? and exists(select 1 from T_LocalPatrol l where l.PlanId = T_PatrolData.PlanId and l.Executor=T_PatrolData.Excutor and T_PatrolData.SampleTime>=l.StartTime and T_PatrolData.SampleTime<=l.EndTime and l.LocalPatrolId=?)";
+            this.db.nestedExecute(this.db.Ins, sql1, sql2, [userId, localPatrolId], [userId, localPatrolId]).then((res) => {
+                //更新巡检计划已完成测点数
+                let sql3 = "update T_LocalPatrol set FinishedPoint=FinishedPoint-? where LocalPatrolId=?";
+                this.db.execute(this.db.Ins, sql3, [res.rowsAffected, localPatrolId]);
                 resolve(true);
             }, (err) => {
                 this.logSvr.log("delete LocalPatrolData  failed", err, true)
@@ -998,6 +1087,29 @@ export class PatrolSvr {
                 this.logSvr.log("delete LocalPatrolData failed", err, true)
                 reject(err);
             })
+        });
+    }
+
+    /**
+     * 验证当前巡检数据是否未被回收
+     * @param patrolDataId 
+     */
+    isUploadOrNot(patrolDataId: number): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            let sql = `select * from T_PatrolData where PatrolDataId=? and IsUpload=0 `;
+            this.db.execute(this.db.Ins, sql, [patrolDataId]).then((res) => {
+                if (this.helper.copySingle(res)) {
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
+            }, (err) => {
+                this.logSvr.log("get patroldata isupload failed", err, true)
+                reject(err);
+            }).catch((err) => {
+                this.logSvr.log("get patroldata isupload failed", err, true)
+                reject(err);
+            });
         });
     }
 }

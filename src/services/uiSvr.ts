@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { LoadingController, AlertController } from 'ionic-angular';
+import { LoadingController, AlertController, ToastController } from 'ionic-angular';
 
 export interface ISeriesTaskLoading {
     //要执行的promises Function
@@ -22,7 +22,7 @@ export interface ISeriesTaskLoading {
 @Injectable()
 export class UISvr {
 
-    constructor(private loadingCtrl: LoadingController, private alertCtrol: AlertController) {
+    constructor(private loadingCtrl: LoadingController, private alertCtrol: AlertController, private toastCtrl: ToastController) {
 
     }
 
@@ -78,7 +78,7 @@ export class UISvr {
                 loader.dismiss();
                 if (task.allSucceedCallback)
                     task.allSucceedCallback();
-            }, 500);
+            }, 1500);
         }).catch(() => {
             loader.setContent('数据请求中出现异常');
             setTimeout(() => {
@@ -143,6 +143,49 @@ export class UISvr {
             buttons: ['确定']
         });
         alert.present();
+    }
+
+    /**
+     * 带回调函数的确认窗口
+     * @param title 标题
+     * @param subTitle 副标题 
+     * @param callback 
+     */
+    public confirm(title: string, subTitle: string, callback: Function): void {
+        let alert = this.alertCtrol.create({
+            title: title,
+            subTitle: subTitle ? subTitle : '',
+            buttons: [{ text: '取消' }, {
+                text: '确定',
+                handler: () => {
+                    callback();
+                }
+            }]
+        });
+        alert.present();
+    }
+
+    /**
+     * 展示toast通知
+     * @param mes 提示消息
+     * @param duration 持续时间,默认1500ms
+     * @param position 显示位置,top,middle,bottom
+     * @param dismissCallback 销毁后的回调函数
+     */
+    public showToast(mes: string, duration: number, position: string, dismissCallback?: Function): void {
+
+        let toast = this.toastCtrl.create({
+            message: mes,
+            duration: duration ? duration : 1500,
+            position: position
+        });
+
+        if (dismissCallback) {
+            toast.onDidDismiss(() => {
+                dismissCallback();
+            });
+        }
+        toast.present();
     }
 
 }

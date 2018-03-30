@@ -42,8 +42,10 @@ export class AppCfgSvr {
      * 初始化数据库
      */
     public initTd(): Promise<any> {
-        let sql = 'CREATE TABLE IF NOT EXISTS T_AppCfg ( AppCfgId integer primary key ,CfgValue text NOT NULL ,CfgKey text ,UserId integer  NOT NULL, UserName text NOT NULL, LoginName text NOT NULl, ImgPath text, PatternPwd text, CTime text  ) ';
+        let sql = 'CREATE TABLE IF NOT EXISTS T_AppCfg ( AppCfgId integer primary key ,CfgValue text NOT NULL ,CfgKey text ,UserId integer  NOT NULL, UserName text NOT NULL, LoginName text NOT NULl, ImgPath text, PatternPwd text, CTime text , LoginTime text ) ';
         let svrSql = ' CREATE TABLE IF NOT EXISTS T_SvrCfg(SvrCfgId integer primary key, SvrUrl text NOT NULL, CTime text)';
+        let modSql = 'CREATE TABLE IF NOT EXISTS T_UserMod(UserModId integer primary key, UserId integer NOT NULL, ModName text, ModUrl text, IconName text, OrderNum integer, CTime text)';
+        this.dbSvr.execute(this.dbSvr.Ins, modSql, []);
         return this.dbSvr.nestedExecute(this.dbSvr.Ins, sql, svrSql, [], []);
     }
 
@@ -75,14 +77,14 @@ export class AppCfgSvr {
 
     /**
      * 向数据表中插入数据
-     * @param arrValues 固定格式 [ CfgValue, UserId,CTime,CfgKey, UserName, LoginName ]
+     * @param arrValues 固定格式 [ CfgValue, UserId,CTime,CfgKey, UserName,LoginTime, LoginName ]
      */
     public insertOrUpdate(arrValues: Array<any>): Promise<any> {
         if (!arrValues || arrValues.length <= 0) {
             this.logger.log('insertOrUpdate参数错误', '', true);
             return Promise.reject('insertOrUpdate参数错误');
         }
-        let sql = `insert into ${this.tbName} (CfgValue, UserId,CTime,CfgKey,UserName, LoginName) values(?,?,?,?,?,?) `;
+        let sql = `insert into ${this.tbName} (CfgValue, UserId,CTime,CfgKey,UserName, LoginTime, LoginName) values(?,?,?,?,?,?,?) `;
 
         let getKeyPromise = this.getByLoginName(arrValues[arrValues.length - 1]);
 
@@ -94,12 +96,20 @@ export class AppCfgSvr {
                     this.logger.log("AppCfg insertOrUpdate faild:", err, true);
                     return Promise.reject(err);
                 });
+            } else {
+                sql = `update  ${this.tbName} set LoginTime=? where LoginName=?`;
+                return this.dbSvr.execute(this.dbSvr.Ins, sql, [arrValues[arrValues.length - 2], arrValues[arrValues.length - 1]]).then(function (res) {
+                    return Promise.resolve(res);
+                }, function (err) {
+                    this.logger.log("AppCfg insertOrUpdate faild:", err, true);
+                    return Promise.reject(err);
+                });
             }
         }
 
         return getKeyPromise.then(inOrUpdatePromise).catch((error) => {
-            this.logger.log("AppCfg getByCfgKey faild:", error, true);
-            return Promise.reject("AppCfg getByCfgKey faild:");
+            this.logger.log("AppCfg getByLoginName faild:", error, true);
+            return Promise.reject("AppCfg getByLoginName faild:" + error);
         });
     }
 
@@ -121,7 +131,7 @@ export class AppCfgSvr {
      * @param udata 
      */
     public setCurUserData(udata: any): Promise<any> {
-        var vbinds = [JSON.stringify(udata), udata.UserId, CommonHelper.getInstance().dateFormat(new Date(), 'yyyy-MM-dd hh:mm:ss'), 'CUser', udata.UserName, udata.LoginName];
+        var vbinds = [JSON.stringify(udata), udata.UserId, CommonHelper.getInstance().dateFormat(new Date(), 'yyyy-MM-dd hh:mm:ss'), 'CUser', udata.UserName, CommonHelper.getInstance().dateFormat(new Date(), 'yyyy-MM-dd hh:mm:ss'), udata.LoginName];
         return this.insertOrUpdate(vbinds);
     }
 
@@ -170,7 +180,7 @@ export class AppCfgSvr {
     /**获取已登录过的用户列表信息 */
     public getLogonUserList(): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            let sql = "select * from T_AppCfg";
+            let sql = "select * from T_AppCfg order by LoginTime desc";
             this.dbSvr.execute(this.dbSvr.Ins, sql, []).then((res) => {
                 let list = this.helper.copyRows(res);
                 let cdata = [];
@@ -217,7 +227,7 @@ export class AppCfgSvr {
                         UserId: rdata.UserId,
                         UserName: rdata.UserName
                     }
-                    this.setCurUserData(UsrObj).then(()=>{
+                    this.setCurUserData(UsrObj).then(() => {
                         resolve(UsrObj);
                     })
                 } else {
@@ -290,6 +300,99 @@ export class AppCfgSvr {
             }).catch((err) => {
                 this.logger.log('update UserImage failed,' + err, true);
                 reject(err);
+            });
+        });
+    }
+
+    /**
+     * 获取用户首页的快捷方式
+     * @param userId 
+     */
+    public getUserMods(userId: number): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            let sql = 'select * from T_UserMod where UserId=? order by OrderNum';
+            this.dbSvr.execute(this.dbSvr.Ins, sql, [userId]).then((res) => {
+                let list = this.helper.copyRows(res);
+                resolve(list);
+            }, (err) => {
+                this.logger.log('get UserMods failed,' + err, true);
+                reject(err);
+            }).catch((err) => {
+                this.logger.log('get UserMods failed,' + err, true);
+                reject(err);
+            });
+        });
+    }
+
+    /**
+     * 保存用户的快捷方式
+     * @param userid 
+     * @param modArr {ModName: '', ModUrl: '', IconName: '', OrderNum:0}
+     */
+    public insertUserMod(userid: number, mod: any): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            let sql = 'insert into T_UserMod (UserId, ModName, ModUrl, IconName, OrderNum) values(?,?,?,?,?)';
+            this.dbSvr.execute(this.dbSvr.Ins, sql, [userid, mod.ModName, mod.ModUrl, mod.IconName, mod.OrderNum ? mod.OrderNum : 0]).then((res) => {
+                resolve(res);
+            }, (err) => {
+                this.logger.log('insertUserMod failed,' + err, true);
+                reject(err);
+            });
+        });
+    }
+
+    /**
+     * 删除快捷方式
+     * @param userid 
+     * @param modName 
+     */
+    public deleteUserMod(userid: number, modName: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            let sql = "delete from T_UserMod where UserId=? and ModName=?";
+            this.dbSvr.execute(this.dbSvr.Ins, sql, [userid, modName]).then((res) => {
+                resolve(res);
+            }, (err) => {
+                this.logger.log('deleteUserMod failed,' + err, true);
+                reject(err);
+            }).catch((err) => {
+                this.logger.log('deleteUserMod failed,' + err, true);
+                reject(err);
+            });
+        });
+    }
+
+    /**
+     * 对用户的快捷方式重新排序
+     * @param userId 
+     * @param modName 
+     * @param oldOrder 原始序列
+     * @param newOrder 新的序列
+     */
+    public reorderMod(userId: number, modName: string, oldOrder: number, newOrder: number): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            let sql = "update T_UserMod set OrderNum=? where UserId=? and ModName=?";
+            this.dbSvr.execute(this.dbSvr.Ins, sql, [newOrder, userId, modName]).then((res) => {
+                resolve(res);
+            }, (err) => {
+                this.logger.log('Reorder UserMod failed,' + err, true);
+            }).catch((err) => {
+                this.logger.log('Reorder UserMod failed,' + err, true);
+            });
+            let sql1="";
+            if (oldOrder > newOrder) {
+                //向上拖拽排序,即原始顺序大于新的顺序,
+                sql1="update T_UserMod set OrderNum=OrderNum+1 where UserId=? and OrderNum>=? and OrderNum<?";
+            } else {
+                //向下拖拽排序,即原始顺序小于新的顺序
+                sql1="update T_UserMod set OrderNum=OrderNum-1 where UserId=? and OrderNum<=? and OrderNum>? ";
+            }
+            
+            this.dbSvr.nestedExecute(this.dbSvr.Ins, sql1, sql, [userId, newOrder, oldOrder], [newOrder, userId, modName]).then((res) => {
+                resolve(res);
+            }, (err) => {
+                this.logger.log('Reorder UserMod failed,' + err, true);
+            }).catch((err) => {
+                this.logger.log('Reorder UserMod failed,' + err, true);
             });
         });
     }

@@ -1,23 +1,28 @@
 page-home {
-    .area-tip {
-        margin: 0.5em 0 0 0.5em;
-        padding: 0;
-        font-size: 1.2em;
-    }
+
     .square-panel {
-        padding: 0 10px 0 10x;
-        text-align: center;
+        padding: 5px 10px;
+        text-align: center !important;
+        border-bottom: 1px solid #e0dfe4;
+        border-right: 1px solid #e0dfe4;
     }
     .small {
-        padding: 0 12px 0 12px !important;
-        text-align: center;
+        border: none !important;
     }
     .square-tip {
-        font-size: 15px;
-        font-weight: 600;
+        padding-bottom: 8px;
     }
     .square-button {
-        padding: 50% 0 50% 0 !important;
-        border-radius: 15px;
+        // padding: 50% 0 !important;
+        border-radius: 10px;
+    }
+
+    .grid{
+        background-color:white !important;
+    }
+
+    .row{
+        border-left: 1px solid #e0dfe4;
+        border-top: 1px solid #e0dfe4;
     }
 }

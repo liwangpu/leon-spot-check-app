@@ -5,7 +5,7 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { LoggerSvr } from '../services/loggerSvr';
 import { AlarmSvr } from '../services/alarmSvr/alarmSvr';
 import { SQLite } from '@ionic-native/sqlite'
@@ -16,9 +16,7 @@ import { PatrolModule } from '../pages/patrol/patrol.module';
 import { ResumeModule } from '../pages/resume/resume.module';
 import { StatusModule } from '../pages/status/status.module';
 import { WorkBookModule } from '../pages/workbook/workbook.module';
-import { CommonInterceptor } from '../interceptors/commonInterceptor';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
-import { AppMinimize } from '@ionic-native/app-minimize';
 import { HomeModule } from '../pages/home/home.module';
 import { AdvsModule } from '../pages/advs/advs.module';
 import { MineModule } from '../pages/mine/mine.module';
@@ -32,8 +30,12 @@ import { MachTreeAsyncService } from '../services/machTreeSvr/machTreeAsync';
 import { Camera } from "@ionic-native/camera";
 import { NativeService } from '../services/nativeService';
 
-import { DataStore } from '../services/dataStore/datastore';
-import { DbStoreProvider } from '../services/dataStore/datastore.provider';
+import { AppVersion } from '@ionic-native/app-version';
+import { FileTransfer } from '@ionic-native/file-transfer';
+import { File } from '@ionic-native/file';
+import { FileOpener } from '@ionic-native/file-opener';
+import { Keyboard } from '@ionic-native/keyboard';
+
 @NgModule({
   declarations: [
     MyApp,
@@ -70,7 +72,6 @@ import { DbStoreProvider } from '../services/dataStore/datastore.provider';
     StatusBar,
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    { provide: HTTP_INTERCEPTORS, useClass: CommonInterceptor, multi: true },
     HttpService,
     SQLite,
     DataBase,
@@ -82,11 +83,13 @@ import { DbStoreProvider } from '../services/dataStore/datastore.provider';
     UISvr,
     MachTreeAsyncService,
     BarcodeScanner,
-    AppMinimize,
-    DbStoreProvider,
-    DataStore,
     Camera,
-    NativeService
+    NativeService,
+    AppVersion,
+    FileTransfer,
+    File,
+    FileOpener,
+    Keyboard
   ]
 })
 export class AppModule { }

@@ -8,8 +8,8 @@
     <ion-refresher (ionRefresh)="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
-    <div style="height:40%;padding:0;margin:0;">
-        <page-home-stat-area #homeStatArea [isVisitor]="isVisitor"></page-home-stat-area>
+    <div style="height:40%;padding:0;margin:0;background-color:#EFEEF4 !important;">
+        <page-home-stat-area #homeStatArea [isVisitor]="isVisitor" ></page-home-stat-area>
     </div>
 
     <div>
@@ -17,6 +17,6 @@
     </div>
 
     <div>
-        <page-home-module-area></page-home-module-area>
+        <page-home-module-area [MyModArr]="userModArr" ></page-home-module-area>
     </div>
 </ion-content>

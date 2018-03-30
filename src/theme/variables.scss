@@ -44,24 +44,30 @@ primary: #5AA8D8, secondary: #32db64, danger: #f53d3d, light: #f4f4f4, dark: #22
 
 $toolbar-background: color($colors, primary);
 $toolbar-ios-border-color: color($colors, primary);
-$tabs-ios-background: color($colors, primary);
-$tabs-md-background: color($colors, primary);
+$tabs-ios-background: white;// color($colors, primary);
+$tabs-md-background: white; //color($colors, primary);
 //$tabs-ios-border: 0;
 $tabs-ios-border-color: #e0dfe4;
 $searchbar-ios-input-height: 33px;
 $searchbar-ios-background-color: color($colors, primary);
 $hairlines-width: 1px;
 $list-border-color: #e0dfe4;
-$tabs-ios-tab-icon-color:white;
-$tabs-ios-tab-icon-color-active:white;
-$tabs-ios-tab-text-color: white;
-$tabs-md-tab-text-color: white;
-$tabs-ios-tab-text-color-active:white;
+$tabs-ios-tab-icon-color:#a0a1a2;
+$tabs-ios-tab-icon-color-active:color($colors, primary);//white;
+$tabs-ios-tab-text-color: #a0a1a2;//white;
+$tabs-md-tab-text-color: #a0a1a2;//white;
+$tabs-ios-tab-text-color-active:color($colors, primary);//white;
 // $background-color:#EFEEF4;//会覆盖全部,包括组件里面的背景色
 .content {
     background-color: #EFEEF4 !important;
 }
-
+.toast-wrapper{
+    margin-bottom: 45px !important;
+    width: 50% !important;
+}
+.toast-message {
+    text-align: center;
+}
 /********************** end *******************************************/
 
 @import "ionic.theme.default";

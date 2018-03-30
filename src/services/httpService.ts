@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
+import { X2JS } from '../common/xml2json';
 
 @Injectable()
 export class HttpService {
@@ -18,6 +19,19 @@ export class HttpService {
         return this.http.get(url + '?' + this.toQueryString(params))
             .toPromise()
             .then(res => this.handlerSuccess(res.json()))
+            .catch(error => this.handlerFailure(error));
+    }
+
+    /**
+     * get 请求,获取xml内容
+     * @param url 
+     * @param params 
+     */
+    public getXml(url: string, params: any) {
+        let headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
+        return this.http.get(url + '?' + this.toQueryString(params), new RequestOptions({ headers: headers }))
+            .toPromise()
+            .then(res => this.handlerXml(res))
             .catch(error => this.handlerFailure(error));
     }
 
@@ -53,6 +67,17 @@ export class HttpService {
      */
     private handlerSuccess(response) {
         return { success: true, msg: response.Msg, data: response };
+    }
+
+    /**
+     * 处理xml,转换为json
+     * @param response 
+     */
+    private handlerXml(response) {
+        let rdata = new X2JS().xml_str2json(response._body);
+        let result = new Array();
+        result.push(rdata);
+        return { success: true, msg: response.Msg, data: result };
     }
 
     /**

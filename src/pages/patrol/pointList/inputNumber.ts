@@ -1,11 +1,12 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavParams, ViewController, Events } from 'ionic-angular';
+import { Component, ViewChild, ElementRef, Renderer } from '@angular/core';
+import { NavParams, ViewController, Events, Content } from 'ionic-angular';
 import { PatrolSvr } from '../../../services/services';
 import { LoggerSvr } from '../../../services/loggerSvr';
 import { AppConfig } from '../../../common/appConfig';
 import { CommonHelper } from '../../../common/commonHelper';
 import Chart from 'chart.js';
 import { UISvr } from '../../../services/uiSvr';
+import { Keyboard } from '@ionic-native/keyboard';
 
 @Component({
     templateUrl: 'inputNumber.html'
@@ -29,7 +30,10 @@ export class InputNumPage {
     myChart: any;
 
     @ViewChild('histLine') histLine: ElementRef;
-
+    @ViewChild('numTxt') inputNum;
+    @ViewChild('myFooter') myFooter: ElementRef;
+    @ViewChild(Content) content: Content;
+    mb: any;//content与底部间距
     alarmSet: any;
     alarmText: string;
 
@@ -39,7 +43,9 @@ export class InputNumPage {
         private patrolSvr: PatrolSvr,
         private events: Events,
         private logSvr: LoggerSvr,
-        private uiSvr: UISvr
+        private uiSvr: UISvr,
+        private keyboard: Keyboard,
+        private renderer: Renderer
     ) {
         this.curPatrol = this.navPara.get('patrol');
         this.curMach = this.navPara.get('mach');
@@ -56,16 +62,21 @@ export class InputNumPage {
     checkLevel() {
         this.alarmText = "";
         this.alarmSet.forEach(alarm => {
-            if (parseFloat(this.NewData.Numeric) > parseFloat(alarm.Value)) {
+            if (parseFloat(this.NewData.Numeric) >= parseFloat(alarm.Value)) {
                 this.alarmText = alarm.Text;
             }
         });
     }
 
     ionViewDidEnter() {
+        //显示键盘的时候隐藏foot
+        this.keyboard.onKeyboardShow().subscribe(() => { this.adjustFooter(true); });
+        this.keyboard.onKeyboardHide().subscribe(() => { this.adjustFooter(false); });
+
         setTimeout(() => {
-            window.document.getElementById('numTxt').focus();
-        }, 100);
+            this.inputNum.setFocus();
+            this.keyboard.show();
+        }, 800);
 
         this.events.subscribe("refreshNumHis", (hdata) => {
             this.refreshHistory(hdata).then(() => {
@@ -73,6 +84,23 @@ export class InputNumPage {
             });
         });
         this.refreshChart();
+    }
+
+    //弹出/隐藏键盘时,重新调整footer
+    adjustFooter(isHidden) {
+        let content = this.queryElement(<HTMLElement>this.content.getElementRef().nativeElement, '.scroll-content')
+        if (isHidden) {
+            this.renderer.setElementStyle(this.myFooter.nativeElement, 'display', 'none');
+            this.mb = content.style['margin-bottom'];
+            this.renderer.setElementStyle(content, 'margin-bottom', '0');
+        } else {
+            this.renderer.setElementStyle(this.myFooter.nativeElement, 'display', '');
+            this.renderer.setElementStyle(content, 'margin-bottom', this.mb);
+        }
+    }
+
+    private queryElement(elem: HTMLElement, q: string): HTMLElement {
+        return <HTMLElement>elem.querySelector(q);
     }
 
     //页面销毁前取消订阅事件
@@ -158,13 +186,27 @@ export class InputNumPage {
         if (!data) {
             return;
         }
-        this.patrolSvr.deleteOnePatrolData(data.PatrolDataId).then((res) => {
-            this.events.publish('refreshLastValue', (data.NodeId));
-            this.PointHistory.splice(this.PointHistory.indexOf(data), 1);
-            this.refreshChart();
-        }, (err) => {
-            this.uiSvr.alert('数据保存失败', '参考信息：' + err);
-        });
+        this.patrolSvr.isUploadOrNot(data.PatrolDataId).then((tres) => {
+            if (tres) {
+                this.uiSvr.confirm('','当前巡检数据未被回收，是否继续删除?', ()=>{
+                    this.patrolSvr.deleteOnePatrolData(data.PatrolDataId).then((res) => {
+                        this.events.publish('refreshLastValue', (data.NodeId));
+                        this.PointHistory.splice(this.PointHistory.indexOf(data), 1);
+                        this.refreshChart();
+                    }, (err) => {
+                        this.uiSvr.alert('数据删除失败', '参考信息：' + err);
+                    });
+                });
+            } else {
+                this.patrolSvr.deleteOnePatrolData(data.PatrolDataId).then((res) => {
+                    this.events.publish('refreshLastValue', (data.NodeId));
+                    this.PointHistory.splice(this.PointHistory.indexOf(data), 1);
+                    this.refreshChart();
+                }, (err) => {
+                    this.uiSvr.alert('数据删除失败', '参考信息：' + err);
+                });
+            }
+        })
     }
 
     /**

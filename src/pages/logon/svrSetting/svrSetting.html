@@ -16,27 +16,27 @@
         <ion-list>
             <ion-item>
                 <ion-icon name="link" item-start></ion-icon>
-                <ion-label>上一次地址 {{oldUrl}}
+                <ion-label>当前地址 {{oldUrl}}
                 </ion-label>
             </ion-item>
             <ion-item>
                 <ion-icon name="globe-outline" item-start></ion-icon>
                 <ion-label>IP地址</ion-label>
-                <ion-input type="text" placeholder="必填" required="true" name="ip" [(ngModel)]="ipAdrr"></ion-input>
+                <ion-input type="text" placeholder="必填" required="true" name="ip" [(ngModel)]="ipAdrr" clearInput="true"></ion-input>
             </ion-item>
             <ion-item>
                 <ion-icon name="git-commit" item-start></ion-icon>
                 <ion-label>端口号</ion-label>
-                <ion-input type="number" placeholder="默认80,没有可不填" [(ngModel)]="port" name="port"></ion-input>
+                <ion-input type="number" placeholder="默认80,没有可不填" [(ngModel)]="port" name="port" clearInput="true"></ion-input>
             </ion-item>
             <ion-item>
                 <ion-icon name="git-branch" item-start></ion-icon>
                 <ion-label>后缀名</ion-label>
-                <ion-input type="text" placeholder="请输入后缀" [(ngModel)]="suffix" name="suffix"></ion-input>
+                <ion-input type="text" placeholder="请输入后缀" [(ngModel)]="suffix" name="suffix" clearInput="true"></ion-input>
             </ion-item>
             <ion-item>
                 <ion-icon name="link" item-start></ion-icon>
-                <ion-label>完整地址 {{newSvrUrl}}</ion-label>
+                <ion-label>新地址 {{newSvrUrl}}</ion-label>
                 <!-- <ion-input readonly="true" [(ngModel)]="newSvrUrl" name="newSvrUrl"></ion-input> -->
             </ion-item>
         </ion-list>

@@ -14,7 +14,7 @@
             <!-- <button ion-button clear style="padding:0; margin:0; border: 0">
                 <img src="../../../assets/imgs/scan.png" />
             </button> -->
-            <ion-icon name="scan" style="zoom: 2.2;" color="primary" (click)="scanMach()"></ion-icon>
+            <ion-icon name="scan" style="zoom: 2.2;" color="light" (click)="scanMach()"></ion-icon>
         </ion-col>
     </ion-row>
 </ion-header>
@@ -27,7 +27,7 @@
 
     <ion-list>
         <div *ngFor="let item of PatrolMach">
-            <ion-item-divider *ngIf="item.NodeType!=3" color="primary">
+            <ion-item-divider *ngIf="item.NodeType!=3" >
                 {{item.NodeName}}
                 <ion-badge item-end>{{item.PointDone}}/{{item.PointCount}}</ion-badge>
             </ion-item-divider>

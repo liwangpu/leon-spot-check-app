@@ -17,6 +17,8 @@ export class HomePage {
     warningCount: number;
     alarmCount: number;
     dangerCount: number;
+    userModArr: Array<any> = [];//用户快捷方式
+    isRefresh = false;
 
     @ViewChild('homeStatArea') statArea: StatAreaPage;
     constructor(
@@ -41,10 +43,11 @@ export class HomePage {
 
     ionViewWillEnter() {
         this.isVisitor = !this.appCfg.checkCustomer();
-    
         this.statArea.slides.startAutoplay();
         // this.statArea.slides.update();
         this.refreshMachStatus();
+
+        this.getCurUserMod();
     }
 
     ionViewDidLeave() {
@@ -52,7 +55,31 @@ export class HomePage {
         // this.statArea.slides.update();
     }
 
+    /**获取当前用户的快捷方式 */
+    getCurUserMod() {
+        if(this.isRefresh){
+            return;
+        }
+        this.isRefresh = true;
+        this.userModArr = [];
+        this.appCfgSvr.getUserMods(this.appCfg.UserId).then((res) => {
+            res.forEach(mod => {
+                this.userModArr.push({
+                    title: mod.ModName,
+                    url: Object(mod.ModUrl),
+                    simpleText: String(mod.ModName).substr(0, 1),
+                    iconName: mod.IconName
+                });
+            });
+            this.isRefresh = false;
+        });
+    }
+
     doRefresh(refresher) {
+        if (this.isVisitor) {
+            refresher.complete();
+            return;
+        }
         this.refreshMachStatus().then(() => {
             refresher.complete();
         }).catch(() => {
@@ -75,6 +102,10 @@ export class HomePage {
                 }
                 else {
                     //ionViewDidLoad事件里面不允许reject否则运行出现异常
+                    this.preWarningCount = 0;
+                    this.warningCount = 0;
+                    this.alarmCount = 0;
+                    this.dangerCount = 0;
                     resolve();
                 }
             });

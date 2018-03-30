@@ -1,4 +1,4 @@
-page-patrol-plan {
+page-UploadPatrol{
     span.positive {
         color: #3D81F5;
     }
@@ -6,12 +6,6 @@ page-patrol-plan {
     span.assertive{
         color: #F05C51; 
     }
-
-    
-    .seg-header{
-        background-color:color($colors, light)
-    }
-
     .item{
         border-top: 1px solid #e0dfe4 !important;
     }
@@ -19,9 +13,5 @@ page-patrol-plan {
     .grid{
         border-bottom: 1px solid #e0dfe4 !important;
         background: #fff;
-    }
-
-    .login-item{
-        font-size: 15px;
     }
 }

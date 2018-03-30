@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
-import { NavParams, NavController } from 'ionic-angular';
+import { NavParams, NavController, Nav } from 'ionic-angular';
 import { AppConfig } from '../../../common/appConfig';
 import { PatrolAsyncService } from '../../../services/patrolSvr/patrolAsync';
 import { UISvr } from '../../../services/uiSvr';
-import { PlanPage } from '../plan/plan';
-import { HomePage } from '../../home/home';
 @Component({
     selector: 'page-patrol-down-confirm',
     templateUrl: './confirm.html',
@@ -15,8 +13,12 @@ export class ComfirmDownPage {
     execTime: number;
     planIds: Array<string>;
     planNames: Array<string>;
-    constructor(private navCtrl: NavController, private navPara: NavParams, private patrolAsnc: PatrolAsyncService, private uiSvr: UISvr) {
-        this.execTime = 10;
+    constructor(private navCtrl: NavController,
+        private navPara: NavParams,
+        private patrolAsnc: PatrolAsyncService,
+        private uiSvr: UISvr,
+        private nav: Nav) {
+        this.execTime = 3;
         this.planIds = this.navPara.get('planIds');
         this.planNames = this.navPara.get('planNames');
     }
@@ -46,9 +48,13 @@ export class ComfirmDownPage {
             promiseFunction: allPromiseFuns,
             promiseMessage: allPromiseMessage,
             ignoreReject: true,
-            allSuccessMessage: '计划下载完毕',
+            allSuccessMessage: '数据加载中...',
             allSucceedCallback: () => {
-                this.navCtrl.setRoot(HomePage).then(() => { this.navCtrl.push(PlanPage) });
+                let tabIdx = this.nav.getActiveChildNavs()[0].getSelected().index;
+                if (tabIdx == 1)
+                    this.navCtrl.remove(2, this.navCtrl.length() - 2);
+                else
+                    this.navCtrl.goToRoot(null);
             }
         });
     }

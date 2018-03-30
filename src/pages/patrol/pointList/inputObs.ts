@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
-import { NavParams, ViewController, Events } from 'ionic-angular';
+import { Component, ViewChild, ElementRef, Renderer } from '@angular/core';
+import { NavParams, ViewController, Events, Content } from 'ionic-angular';
 import { PatrolSvr } from '../../../services/services';
 import { LoggerSvr } from '../../../services/loggerSvr';
 import { AppConfig } from '../../../common/appConfig';
 import { CommonHelper } from '../../../common/commonHelper';
 import { UISvr } from '../../../services/uiSvr';
+import { Keyboard } from '@ionic-native/keyboard';
 
 @Component({
     templateUrl: 'inputObs.html'
@@ -23,16 +24,23 @@ export class InputObsPage {
     helper = CommonHelper.getInstance();
     PtObs: Array<any>;
     PointHistory: Array<any>;
-    Des: any;//备注
+    Des: any = "";//备注
     seletedObs = [];
     obIdSelected: any;
+    @ViewChild('myFooter') myFooter: ElementRef;
+    @ViewChild(Content) content: Content;
+    mb: any;//content与底部间距
+    alarmSet: any;
+    alarmText: string = "";
     constructor(
         private navPara: NavParams,
         private viewCtrl: ViewController,
         private patrolSvr: PatrolSvr,
         private events: Events,
         private logSvr: LoggerSvr,
-        private uiSvr: UISvr
+        private uiSvr: UISvr,
+        private keyboard: Keyboard,
+        private renderer: Renderer
     ) {
         this.curPatrol = this.navPara.get('patrol');
         this.curMach = this.navPara.get('mach');
@@ -41,6 +49,7 @@ export class InputObsPage {
         this.MeasLocation = this.navPara.get('measLocation');
         this.PtObs = this.navPara.get('ptObs');
         this.PointHistory = this.navPara.get('phistory');
+        this.alarmSet = this.navPara.get('alarmSet');
 
         this.curUser = {
             UserId: AppConfig.getInstance().UserId,
@@ -49,13 +58,32 @@ export class InputObsPage {
     }
 
     ionViewDidEnter() {
-        // this.PtObs.forEach(item=>{
-        //     item.selected = false;
-        // });
         this.events.subscribe("refreshObsHis", (hdata) => {
             this.refreshObsHis(hdata);
         });
+
+        //显示键盘的时候隐藏foot
+        this.keyboard.onKeyboardShow().subscribe(() => { this.adjustFooter(true); });
+        this.keyboard.onKeyboardHide().subscribe(() => { this.adjustFooter(false); });
     }
+
+    //弹出/隐藏键盘时,重新调整footer
+    adjustFooter(isHidden) {
+        let content = this.queryElement(<HTMLElement>this.content.getElementRef().nativeElement, '.scroll-content')
+        if (isHidden) {
+            this.renderer.setElementStyle(this.myFooter.nativeElement, 'display', 'none');
+            this.mb = content.style['margin-bottom'];
+            this.renderer.setElementStyle(content, 'margin-bottom', '0');
+        } else {
+            this.renderer.setElementStyle(this.myFooter.nativeElement, 'display', '');
+            this.renderer.setElementStyle(content, 'margin-bottom', this.mb);
+        }
+    }
+
+    private queryElement(elem: HTMLElement, q: string): HTMLElement {
+        return <HTMLElement>elem.querySelector(q);
+    }
+
     //页面销毁前取消订阅事件
     ionViewWillUnload() {
         this.events.unsubscribe("refreshObsHis");
@@ -77,6 +105,14 @@ export class InputObsPage {
         if (item) {
             this.seletedObs = [item];
         }
+        this.alarmText = "";
+        this.alarmSet.forEach(alarm => {
+            if (item.NAME == alarm.Value) {
+                if (alarm.Level > 0)
+                    this.alarmText = alarm.Text;
+                return;
+            }
+        });
     }
 
     saveObsData(): Promise<any> {
@@ -102,7 +138,7 @@ export class InputObsPage {
                     this.uiSvr.alert("数据保存失败", '测点' + this.MeasNode.NodeName + '的数据 ' + obsNames.join(',') + ' 保存失败！参考信息：' + err);
                     reject('测点' + this.MeasNode.NodeName + '的数据 ' + obsNames.join(',') + ' 保存失败！参考信息：' + err);
                 });
-            }else{
+            } else {
                 this.uiSvr.alert('提示', '没有选择任何记录');
                 reject("没有选择任何记录");
             }
@@ -114,9 +150,9 @@ export class InputObsPage {
     }
 
     goNext() {
-        this.saveObsData().then((res)=>{
+        this.saveObsData().then((res) => {
             this.events.publish('nextObsPoint');
-        }, (err)=>{
+        }, (err) => {
             // this.uiSvr.alert('提示', err);
         });
     }
@@ -129,11 +165,25 @@ export class InputObsPage {
         if (!data) {
             return;
         }
-        this.patrolSvr.deleteOnePatrolData(data.PatrolDataId).then((res) => {
-            this.events.publish('refreshLastValue', (data.NodeId));
-            this.PointHistory.splice(this.PointHistory.indexOf(data), 1);
-        }, (err) => {
-            this.uiSvr.alert('数据保存失败', '参考信息：' + err);
+        this.patrolSvr.isUploadOrNot(data.PatrolDataId).then((tres) => {
+            if (tres) {
+                this.uiSvr.confirm('', '当前巡检数据未被回收，是否继续删除?', () => {
+                    this.patrolSvr.deleteOnePatrolData(data.PatrolDataId).then((res) => {
+                        this.events.publish('refreshLastValue', (data.NodeId));
+                        this.PointHistory.splice(this.PointHistory.indexOf(data), 1);
+                    }, (err) => {
+                        this.uiSvr.alert('数据保存失败', '参考信息：' + err);
+                    });
+                })
+            } else {
+                this.patrolSvr.deleteOnePatrolData(data.PatrolDataId).then((res) => {
+                    this.events.publish('refreshLastValue', (data.NodeId));
+                    this.PointHistory.splice(this.PointHistory.indexOf(data), 1);
+                }, (err) => {
+                    this.uiSvr.alert('数据保存失败', '参考信息：' + err);
+                });
+            }
         });
+
     }
 }

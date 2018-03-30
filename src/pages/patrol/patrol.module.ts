@@ -10,36 +10,41 @@ import { InputNumPage } from './pointList/inputNumber';
 import { InputObsPage } from './pointList/inputObs';
 import { StatPage } from './stat/stat';
 import { StatusPage } from './status/status';
+import { UploadPatrolPage } from './uploadPatrol/uploadPatrol';
+import { PatrolAsyncService } from '../../services/patrolSvr/patrolAsync';
 
 @NgModule({
     declarations: [
+        PlanPage,
         PatrolPage,
         MachListPage,
-        PlanPage,
         DownPage,
         ComfirmDownPage,
         PointListPage,
         InputNumPage,
         InputObsPage,
         StatPage,
-        StatusPage
+        StatusPage,
+        UploadPatrolPage
     ],
     entryComponents: [
+        PlanPage,
         PatrolPage,
         MachListPage,
-        PlanPage,
         DownPage,
         ComfirmDownPage,
         PointListPage,
         InputNumPage,
         InputObsPage,
         StatPage,
-        StatusPage
+        StatusPage,
+        UploadPatrolPage
     ],
     imports: [
         IonicModule
     ],
-    exports: [IonicModule]
+    exports: [IonicModule],
+    providers: [PatrolAsyncService]
 })
 export class PatrolModule {
 

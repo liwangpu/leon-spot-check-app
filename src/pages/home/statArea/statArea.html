@@ -1,16 +1,9 @@
-<ion-slides autoplay="3000" loop="true" speed="2000">
-    <!-- <ion-slides> -->
-    <ion-slide *ngIf="isVisitor">
-        <img src="assets/imgs/ads1.jpg" [pageLink]='adv1Link' />
-        <div class="loginMask" [pageLink]='adv1Link'>
-            <ion-avatar>
-                <img src="./assets/imgs/user_white.png" (click)='gotoLogon()'>
-            </ion-avatar>
-            <span (click)='gotoLogon()'>点击登录</span>
-        </div>
+<ion-slides autoplay="3000" speed="1000" pager loop="true">
+    <ion-slide >
+        <img [src]="src1" [pageLink]='adv1Link' />
     </ion-slide>
-    <ion-slide *ngIf="isVisitor">
-        <img src="assets/imgs/ads2.jpg" [pageLink]='adv1Link' />
+    <ion-slide>
+        <img [src]="src2" [pageLink]='adv1Link' />
     </ion-slide>
     <ion-slide *ngIf="!isVisitor">
         <page-home-stat-area-status-adv></page-home-stat-area-status-adv>

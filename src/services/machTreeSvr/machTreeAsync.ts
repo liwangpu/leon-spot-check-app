@@ -13,6 +13,11 @@ export class MachTreeAsyncService {
         let durl = `${AppConfig.getInstance().HMSServiceUrl}/${rest}`;
         let pdata = { iUser: userId };
         return this.http.post(durl, pdata);
+    }
 
+    public getArrivalRate() {
+        var rest = '/PmsApi/MachTreeApi/GetArrivalRate';
+        let durl = `${AppConfig.getInstance().HMSServiceUrl}/${rest}`;
+        return this.http.post(durl, {});
     }
 }

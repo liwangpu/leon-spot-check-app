@@ -48,7 +48,6 @@ export class ArrivalRateAdv implements OnInit {
             ]
         };
 
-
         myChart.setOption(option);
     }
 }
