@@ -1,0 +1,137 @@
+{
+    "model": [
+        {
+        "id": "applications",
+        "title": "nav.General",
+        "type": "group",
+        "icon": "apps",
+        "children": [
+            {
+                "id": "dashboards",
+                "title": "nav.dashboards",
+                "type": "item",
+                "icon": "today",
+                "url": "/apps/dashboards/project"
+            },
+            {
+                "id": "profile",
+                "title": "nav.profile",
+                "type": "item",
+                "icon": "person",
+                "url": "/pages/profile"
+            },
+            {
+                "id": "my-resources",
+                "title": "nav.MyResources",
+                "type": "collapse",
+                "icon": "dashboard",
+                "children": [
+                    {
+                        "id": "meshes",
+                        "title": "nav.MyResourcesMeshes",
+                        "type": "item",
+                        "url": "/pages/faq"
+                    },
+                    {
+                        "id": "materials",
+                        "title": "nav.MyResourcesMaterials",
+                        "type": "item",
+                        "url": "/pages/knowledge-base"
+                    },
+                    {
+                        "id": "textures",
+                        "title": "nav.MyResourcesTextures",
+                        "type": "item",
+                        "url": "/omega/page1"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "interior-design",
+        "title": "nav.InteriorDesign",
+        "type": "group",
+        "icon": "pages",
+        "children": [
+            {
+                "id": "solutions",
+                "title": "nav.InteriorDesignSolutions",
+                "type": "item",
+                "icon": "alarm",
+                "url": "/pages/solution"
+            },
+            {
+                "id": "products",
+                "title": "Products",
+                "type": "item",
+                "icon": "alarm",
+                "url": "/pages/products"
+            },
+            {
+                "id": "orders",
+                "title": "Orders",
+                "type": "item",
+                "icon": "alarm",
+                "url": "/pages/orders"
+            },
+            {
+                "id": "category",
+                "title": "category",
+                "type": "item",
+                "icon": "alarm",
+                "url": "/pages/category"
+            },
+            {
+                "id": "customer",
+                "title": "customer",
+                "type": "item",
+                "icon": "alarm",
+                "url": "/pages/customer"
+            },
+            {
+                "id": "layout",
+                "title": "layout",
+                "type": "item",
+                "icon": "alarm",
+                "url": "/pages/layout"
+            },
+            {
+                "id": "organ",
+                "title": "organization",
+                "type": "item",
+                "icon": "alarm",
+                "url": "/pages/organ"
+            },
+            {
+                "id": "package",
+                "title": "package",
+                "type": "item",
+                "icon": "alarm",
+                "url": "/pages/package"
+            },
+            {
+                "id": "supplier",
+                "title": "supplier",
+                "type": "item",
+                "icon": "alarm",
+                "url": "/pages/supplier"
+            },
+            {
+                "id": "tags",
+                "title": "tags",
+                "type": "item",
+                "icon": "alarm",
+                "url": "/pages/tags"
+            },
+            {
+                "id": "icons",
+                "title": "icons",
+                "type": "item",
+                "icon": "alarm",
+                "url": "/pages/icons"
+            }
+        ]
+    }
+]
+}

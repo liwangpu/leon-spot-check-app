@@ -1,0 +1,1798 @@
+{
+	"info": {
+		"_postman_id": "e0945c1c-fcf4-42ae-a8e6-6f6735b13533",
+		"name": "Damaozhu",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Global",
+			"description": "",
+			"item": [
+				{
+					"name": "Settings",
+					"description": "",
+					"item": [
+						{
+							"name": "Get all settings",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/settings",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "New Settings Item",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"key\":\"item1\",\n\t\"value\":\"bb\"\n}"
+								},
+								"url": {
+									"raw": "{{base}}/settings",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Settings Item",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "\"aaaa\""
+								},
+								"url": {
+									"raw": "{{base}}/settings/item1",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"settings",
+										"item1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Settings Item",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/settings/item1",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"settings",
+										"item1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Reload Settings",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/settings/reload",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"settings",
+										"reload"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "Account",
+			"description": null,
+			"item": [
+				{
+					"name": "Get Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"account\":\"test2@a.com\",\n\t\"password\":\"{{normalpwd}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base}}/token",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\":\"test1@a.com\",\n\t\"password\":\"e10adc3949ba59abbe56e057f20f883e\"\n}"
+						},
+						"url": {
+							"raw": "{{base}}/account/register",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"account",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Token admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"account\":\"admin\",\n\t\"password\":\"{{adminpwd}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base}}/token",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get NavigationData",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"account\":\"test2@a.com\",\n\t\"password\":\"{{normalpwd}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base}}/account/navigation",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"account",
+								"navigation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"account\":\"test2@a.com\",\n\t\"password\":\"{{normalpwd}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base}}/account/profile",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"account",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Design",
+			"description": "",
+			"item": [
+				{
+					"name": "Layout",
+					"description": "",
+					"item": [
+						{
+							"name": "GET Layout",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/layout",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"layout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET Layout with search",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/layout?orderby=Name&pageSize=20&desc=true",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"layout"
+									],
+									"query": [
+										{
+											"key": "orderby",
+											"value": "Name"
+										},
+										{
+											"key": "pageSize",
+											"value": "20"
+										},
+										{
+											"key": "desc",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Layout by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/layout/aaaaaa",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"layout",
+										"aaaaaa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "newone",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/layout/newone",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"layout",
+										"newone"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Layout",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"province\": null,\n    \"city\": null,\n    \"district\": null,\n    \"address\": null,\n    \"geoPos\": null,\n    \"planImageUrl\": null,\n    \"planImageScale\": 0,\n    \"data\": \"hi\",\n    \"folderId\": null,\n    \"categoryId\": null,\n    \"description\": \"\",\n    \"icon\": \"\",\n    \"name\": \"hello\"\n}"
+								},
+								"url": {
+									"raw": "{{base}}/layout",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"layout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE Layout",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/layout/aaaa",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"layout",
+										"aaaa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Layout",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"province\": null,\n    \"city\": null,\n    \"district\": null,\n    \"address\": null,\n    \"geoPos\": null,\n    \"planImageUrl\": null,\n    \"planImageScale\": 0,\n    \"data\": null,\n    \"folderId\": null,\n    \"categoryId\": null,\n    \"accountId\": null,\n    \"description\": \"lala\",\n    \"icon\": \"\",\n    \"createTime\": \"2018-03-10T09:53:27.0043875Z\",\n    \"modifyTime\": \"2018-03-10T09:53:27.0043875Z\",\n    \"id\": \"EjIKAZ9v6NbP3P\",\n    \"name\": \"hello3\"\n}"
+								},
+								"url": {
+									"raw": "{{base}}/layout",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"layout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Layout Data",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "\"bb\""
+								},
+								"url": {
+									"raw": "{{base}}/layout/UpdateData?id=kbIlNy0VKVm6VO",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"layout",
+										"UpdateData"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "kbIlNy0VKVm6VO"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Solution",
+					"description": "",
+					"item": [
+						{
+							"name": "GET Solution",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/solution",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"solution"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET Solution with search",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/solution?orderby=Name&pageSize=20&desc=true",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"solution"
+									],
+									"query": [
+										{
+											"key": "orderby",
+											"value": "Name"
+										},
+										{
+											"key": "pageSize",
+											"value": "20"
+										},
+										{
+											"key": "desc",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Solution by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/solution/aaaa",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"solution",
+										"aaaa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "newone",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/solution/newone",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"solution",
+										"newone"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Solution",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"layoutId\": null,\n    \"data\": null,\n    \"folderId\": null,\n    \"categoryId\": null,\n    \"accountId\": null,\n    \"description\": \"\",\n    \"icon\": \"\",\n    \"createTime\": \"2018-03-10T10:22:16.6880375Z\",\n    \"modifyTime\": \"2018-03-10T10:22:16.6880375Z\",\n    \"name\": \"obj0000\"\n}"
+								},
+								"url": {
+									"raw": "{{base}}/solution",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"solution"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE Solution",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/solution/aaaa",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"solution",
+										"aaaa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Solution",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"layoutId\": null,\n    \"data\": null,\n    \"folderId\": null,\n    \"categoryId\": null,\n    \"accountId\": null,\n    \"description\": \"\",\n    \"icon\": \"\",\n    \"createTime\": \"2018-03-10T10:22:16.6880375Z\",\n    \"modifyTime\": \"2018-03-10T10:22:16.6880375Z\",\n    \"id\": \"OwI8axqz0k5dmE\",\n    \"name\": \"obj0000\"\n}"
+								},
+								"url": {
+									"raw": "{{base}}/solution",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"solution"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Solution Data",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "\"bb\""
+								},
+								"url": {
+									"raw": "{{base}}/solution/UpdateData?id=OwI8axqz0k5dmE",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"solution",
+										"UpdateData"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "OwI8axqz0k5dmE"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Products",
+					"description": "",
+					"item": [
+						{
+							"name": "GET Products",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/products",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET Products with search",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/products?orderby=Name&pageSize=20&desc=true",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"products"
+									],
+									"query": [
+										{
+											"key": "orderby",
+											"value": "Name"
+										},
+										{
+											"key": "pageSize",
+											"value": "20"
+										},
+										{
+											"key": "desc",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Product by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/products/aaaa",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"products",
+										"aaaa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "newone",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/products/newone",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"products",
+										"newone"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"specifications\": null,\n    \"folderId\": null,\n    \"categoryId\": null,\n    \"accountId\": null,\n    \"description\": \"\",\n    \"icon\": \"\",\n    \"createTime\": \"2018-03-10T10:26:34.8394426Z\",\n    \"modifyTime\": \"2018-03-10T10:26:34.8394426Z\",\n    \"name\": \"obj0000\"\n}"
+								},
+								"url": {
+									"raw": "{{base}}/products",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE Product",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/products/aaaa",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"products",
+										"aaaa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Product",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"specifications\": null,\n    \"folderId\": null,\n    \"categoryId\": null,\n    \"accountId\": null,\n    \"description\": \"\",\n    \"icon\": \"\",\n    \"createTime\": \"2018-03-10T10:26:34.8394426Z\",\n    \"modifyTime\": \"2018-03-10T10:26:34.8394426Z\",\n    \"id\": \"OwI8axqz0k5dmE\",\n    \"name\": \"obj0000\"\n}"
+								},
+								"url": {
+									"raw": "{{base}}/products",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"products"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "Assets",
+			"description": "",
+			"item": [
+				{
+					"name": "Files",
+					"description": "",
+					"item": [
+						{
+							"name": "GET Files",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/files",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"files"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET Files with search",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/files?orderby=Name&pageSize=20&desc=true",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"files"
+									],
+									"query": [
+										{
+											"key": "orderby",
+											"value": "Name"
+										},
+										{
+											"key": "pageSize",
+											"value": "20"
+										},
+										{
+											"key": "desc",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET Files by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/files/aaa",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"files",
+										"aaa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "newone",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/files/newone",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"files",
+										"newone"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create File",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"url\": null,\n    \"md5\": null,\n    \"fileExt\": null,\n    \"localPath\": null,\n    \"uploadTime\": null,\n    \"folderId\": null,\n    \"categoryId\": null,\n    \"accountId\": null,\n    \"description\": \"\",\n    \"icon\": \"\",\n    \"createTime\": \"2018-03-11T08:30:08.9939246Z\",\n    \"modifyTime\": \"2018-03-11T08:30:08.9939246Z\",\n    \"id\": \"8RIjDvPbYlNz56\",\n    \"name\": \"obj0000\"\n}"
+								},
+								"url": {
+									"raw": "{{base}}/files",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"files"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE File",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/files/aaa",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"files",
+										"aaa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update File",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"url\": null,\n    \"md5\": null,\n    \"fileExt\": null,\n    \"localPath\": null,\n    \"uploadTime\": null,\n    \"folderId\": null,\n    \"categoryId\": null,\n    \"accountId\": null,\n    \"description\": \"\",\n    \"icon\": \"\",\n    \"createTime\": \"2018-03-11T08:30:08.9939246Z\",\n    \"modifyTime\": \"2018-03-11T08:30:08.9939246Z\",\n    \"id\": \"8RIjDvPbYlNz56\",\n    \"name\": \"obj0000\"\n}"
+								},
+								"url": {
+									"raw": "{{base}}/files",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"files"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UPLOAD FILE",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {}
+								},
+								"url": {
+									"raw": "{{base}}/files/upload",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"files",
+										"upload"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DOWNLOAD FILE",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "{{base}}/upload/82b775ee-9ab9-49a3-8fd3-c0ed41422430",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"upload",
+										"82b775ee-9ab9-49a3-8fd3-c0ed41422430"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "ClientAssets",
+					"description": "",
+					"item": [
+						{
+							"name": "GET ClientAssets",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/clientassets",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"clientassets"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET ClientAssets with Search",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/clientassets?orderby=Name&pageSize=20&desc=true",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"clientassets"
+									],
+									"query": [
+										{
+											"key": "orderby",
+											"value": "Name"
+										},
+										{
+											"key": "pageSize",
+											"value": "20"
+										},
+										{
+											"key": "desc",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET ClientAssets by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/clientassets/aaa",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"clientassets",
+										"aaa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "newone",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/clientassets/newone",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"clientassets",
+										"newone"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create ClientAsset",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"srcFileUrl\": null,\n    \"srcFileMd5\": null,\n    \"srcFileLocalPath\": null,\n    \"uploadTime\": null,\n    \"clientFiles\": null,\n    \"className\": null,\n    \"properties\": null,\n    \"folderId\": null,\n    \"categoryId\": null,\n    \"accountId\": null,\n    \"description\": \"\",\n    \"icon\": \"\",\n    \"createTime\": \"2018-03-11T08:20:50.9759446Z\",\n    \"modifyTime\": \"2018-03-11T08:20:50.9759446Z\",\n    \"name\": \"obj0000\"\n}"
+								},
+								"url": {
+									"raw": "{{base}}/clientassets",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"clientassets"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE ClientAssets",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base}}/clientassets/aaa",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"clientassets",
+										"aaa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update ClientAssets",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"srcFileUrl\": null,\n    \"srcFileMd5\": null,\n    \"srcFileLocalPath\": null,\n    \"uploadTime\": null,\n    \"clientFiles\": null,\n    \"className\": null,\n    \"properties\": null,\n    \"folderId\": null,\n    \"categoryId\": null,\n    \"accountId\": null,\n    \"description\": \"\",\n    \"icon\": \"\",\n    \"createTime\": \"2018-03-11T08:20:50.9759446Z\",\n    \"modifyTime\": \"2018-03-11T08:20:50.9759446Z\",\n    \"id\": \"2GIA15jPZrjO3e\",\n    \"name\": \"obj0000\"\n}"
+								},
+								"url": {
+									"raw": "{{base}}/clientassets",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"clientassets"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"description": null,
+			"item": [
+				{
+					"name": "GET Orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base}}/orders",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Orders with Search",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base}}/orders?orderby=Name&pageSize=20&desc=true",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "orderby",
+									"value": "Name"
+								},
+								{
+									"key": "pageSize",
+									"value": "20"
+								},
+								{
+									"key": "desc",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Orders with Search Copy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base}}/orders?orderby=Name&pageSize=20&desc=true",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "orderby",
+									"value": "Name"
+								},
+								{
+									"key": "pageSize",
+									"value": "20"
+								},
+								{
+									"key": "desc",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Orders by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base}}/orders/YZIrxEx2Dr3Ko8",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"orders",
+								"YZIrxEx2Dr3Ko8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "newone",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base}}/orders/newone",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"orders",
+								"newone"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"PJIVGZGpMO9Rdl\",\n    \"name\": null,\n    \"accountId\": null,\n    \"createTime\": \"0001-01-01T00:00:00\",\n    \"state\": null,\n    \"stateTime\": \"0001-01-01T00:00:00\",\n    \"childOrders\": null,\n    \"content\": null\n}"
+						},
+						"url": {
+							"raw": "{{base}}/orders",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Order",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base}}/orders/PJIVGZGpMO9Rdl",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"orders",
+								"PJIVGZGpMO9Rdl"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change order state",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"NewState\":\"hello2\"\n}"
+						},
+						"url": {
+							"raw": "{{base}}/orders/changestate?id=YZIrxEx2Dr3Ko0",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"orders",
+								"changestate"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "YZIrxEx2Dr3Ko0"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "7abae376-391d-4bcc-880b-2a5e3ff2c48e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "f50526ff-90c1-4bb2-9304-9f0c103950bf",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
